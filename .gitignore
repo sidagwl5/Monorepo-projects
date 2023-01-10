@@ -9,6 +9,7 @@ tmp
 node_modules
 
 # IDEs and editors
+.yarn/cache
 /.idea
 .project
 .classpath
@@ -37,3 +38,6 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Next.js
+.next
