@@ -20,7 +20,7 @@
       "rules": {
         "@next/next/no-html-link-for-pages": [
           "error",
-          "apps/image-editor-demo/pages"
+          "apps/image-editor-app/pages"
         ]
       }
     },

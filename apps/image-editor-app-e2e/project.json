@@ -1,19 +1,19 @@
 {
-  "name": "image-editor-demo-e2e",
+  "name": "image-editor-app-e2e",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/image-editor-demo-e2e/src",
+  "sourceRoot": "apps/image-editor-app-e2e/src",
   "projectType": "application",
   "targets": {
     "e2e": {
       "executor": "@nrwl/cypress:cypress",
       "options": {
-        "cypressConfig": "apps/image-editor-demo-e2e/cypress.config.ts",
-        "devServerTarget": "image-editor-demo:serve:development",
+        "cypressConfig": "apps/image-editor-app-e2e/cypress.config.ts",
+        "devServerTarget": "image-editor-app:serve:development",
         "testingType": "e2e"
       },
       "configurations": {
         "production": {
-          "devServerTarget": "image-editor-demo:serve:production"
+          "devServerTarget": "image-editor-app:serve:production"
         }
       }
     },
@@ -24,13 +24,13 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "apps/image-editor-demo-e2e/**/*.{js,ts}"
+          "apps/image-editor-app-e2e/**/*.{js,ts}"
         ]
       }
     }
   },
   "tags": [],
   "implicitDependencies": [
-    "image-editor-demo"
+    "image-editor-app"
   ]
 }
