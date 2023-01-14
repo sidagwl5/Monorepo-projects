@@ -1,5 +1,6 @@
 import { tw, css } from 'twind/style';
 import { useEffect, useRef } from 'react';
+import { CanvasHandler } from '../classes/CanvasHandler.class';
 
 export const Content = ({ data }: any) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -7,46 +8,80 @@ export const Content = ({ data }: any) => {
 
   useEffect(() => {
     const interval: NodeJS.Timer = setInterval(() => {
-      const canvasElement = canvasRef.current as HTMLCanvasElement;
-      canvasElement.width = imageRef.current?.width as number;
-      canvasElement.height = imageRef.current?.height as number;
+      const _canvasElement = canvasRef.current as HTMLCanvasElement;
+      const _imageElement = imageRef.current as HTMLImageElement;
 
-      const context = canvasElement.getContext('2d');
-
-      context?.drawImage(imageRef.current as HTMLImageElement, 0, 0);
+      CanvasHandler.initialize(_canvasElement, _imageElement);
       clearInterval(interval);
     }, 1000);
   }, []);
 
   useEffect(() => {
-    if (data && imageRef.current) {
-      const filters = data.options
-        .map((v: any) => `${v.property}(${v.props.value}${v.units})`)
-        .join(' ');
+    const canvasElement = canvasRef.current as HTMLCanvasElement;
 
-      const canvasElement = canvasRef.current as HTMLCanvasElement;
-      canvasElement.width = imageRef.current?.width as number;
-      canvasElement.height = imageRef.current?.height as number;
+    let draggable = false;
+    let initialX = 0;
+    let initialY = 0;
 
-      const context = canvasElement.getContext(
-        '2d'
-      ) as CanvasRenderingContext2D;
-      context.filter = filters;
-      context?.drawImage(imageRef.current as HTMLImageElement, 0, 0);
-    }
-  }, [data]);
+    canvasElement.onmousedown = (e) => {
+      if (
+        CanvasHandler.getCoordinates().dx < e.offsetX &&
+        CanvasHandler.getCoordinates().dy < e.offsetY
+      ) {
+        initialX = e.offsetX;
+        initialY = e.offsetY;
+        draggable = true;
+      }
+    };
+    canvasElement.onmouseup = (e) => {
+      if (draggable) {
+        CanvasHandler.setCoordinates(
+          CanvasHandler.getCoordinates().dx + (e.offsetX - initialX),
+          CanvasHandler.getCoordinates().dy + (e.offsetY - initialY)
+        );
+        draggable = false;
+      }
+    };
+    canvasElement.onmousemove = (e) => {
+      if (draggable) {
+        CanvasHandler.context.clearRect(
+          0,
+          0,
+          CanvasHandler.image.width as number,
+          CanvasHandler.image.height
+        );
+
+        CanvasHandler.context.drawImage(
+          CanvasHandler.image,
+          CanvasHandler.getCoordinates().dx + (e.offsetX - initialX),
+          CanvasHandler.getCoordinates().dy + (e.offsetY - initialY)
+        );
+      }
+    };
+
+    canvasElement.onmouseleave = () => {
+      draggable = false;
+    };
+  }, []);
 
   return (
     <section
       className={tw(
-        'w-15 relative flex justify-center items-center',
+        'relative flex justify-center items-center relative',
         css({ '&': { gridArea: 'canvas' } })
       )}
       id="canvas"
     >
-      <div
-        className={tw('max-w-[640px] w-full max-h-[360px] h-full bg-[#152222]')}
-      >
+      <div className={tw('group relative bg-[#152222]')}>
+        <div
+          className={tw(
+            'w-14 h-[28px] opacity-0 group-hover:opacity-100! bg-[#404F52] rounded-full absolute -top-[14px] left-[50%]',
+            css({
+              transform: 'translateX(-50%)',
+              transition: '0.2s all ease-out',
+            })
+          )}
+        ></div>
         <img
           alt="edited-img"
           ref={imageRef}
@@ -54,10 +89,7 @@ export const Content = ({ data }: any) => {
           src="https://c4.wallpaperflare.com/wallpaper/997/210/533/anime-attack-on-titan-attack-on-titan-levi-ackerman-wallpaper-preview.jpg"
         />
 
-        <canvas
-          className={tw('object-contain w-full h-full')}
-          ref={canvasRef}
-        ></canvas>
+        <canvas ref={canvasRef}></canvas>
       </div>
     </section>
   );

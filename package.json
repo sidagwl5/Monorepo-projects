@@ -65,8 +65,10 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
     "react-router-dom": "6.4.3",
+    "react-use": "^17.4.0",
     "regenerator-runtime": "0.13.7",
     "tslib": "^2.3.0",
-    "twind": "^0.16.19"
+    "twind": "^0.16.19",
+    "zustand": "^4.3.1"
   }
 }
