@@ -1,7 +1,7 @@
-import { CanvasDragNDrop } from '../experiments/CanvasDragNDrop';
+import { CanvasDraw } from '../experiments/CanvasDraw';
 
 export function App() {
-  return <CanvasDragNDrop />;
+  return <CanvasDraw />;
 }
 
 export default App;

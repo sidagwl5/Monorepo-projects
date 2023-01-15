@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import { tw, css } from 'twind/style';
+import { css, tw } from 'twind/style';
 
-export const CanvasDragNDrop = () => {
+export const CanvasImageDragNDrop = () => {
   useEffect(() => {
     const imageElement = document.getElementById('image') as HTMLImageElement;
     const canvasElement = document.getElementById(
