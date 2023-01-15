@@ -2935,25 +2935,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nrwl/vite@npm:15.4.4":
-  version: 15.4.4
-  resolution: "@nrwl/vite@npm:15.4.4"
-  dependencies:
-    "@nrwl/devkit": 15.4.4
-    "@nrwl/js": 15.4.4
-    "@nrwl/workspace": 15.4.4
-    "@phenomnomnominal/tsquery": 4.1.1
-    "@swc/helpers": ^0.4.11
-    chalk: 4.1.0
-    dotenv: ~10.0.0
-    enquirer: ~2.3.6
-  peerDependencies:
-    vite: ^4.0.1
-    vitest: ^0.25.8
-  checksum: 65dcaa374833edf37ff3f0ed87fd320a9c96648bd67f32fb99ed1eefae65f01df5ae6d8802a0f8786dade7fa9f2d159e501593912b482e82644a2c8a21b6310b
-  languageName: node
-  linkType: hard
-
 "@nrwl/vite@npm:15.4.5":
   version: 15.4.5
   resolution: "@nrwl/vite@npm:15.4.5"
@@ -12424,7 +12405,7 @@ __metadata:
     "@nrwl/next": ^15.4.5
     "@nrwl/nx-cloud": latest
     "@nrwl/react": 15.4.5
-    "@nrwl/vite": 15.4.4
+    "@nrwl/vite": 15.4.5
     "@nrwl/web": 15.4.5
     "@nrwl/workspace": 15.4.4
     "@testing-library/react": 13.4.0

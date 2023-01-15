@@ -21,7 +21,15 @@ export class CanvasHandler {
   }
 
   static getCoordinates() {
-    return this.canvasData.coordinates;
+    const coordinates = this.canvasData.coordinates;
+    const dx = this.canvasData.flip.x
+      ? -(coordinates.dx + this.image.width)
+      : coordinates.dx;
+    const dy = this.canvasData.flip.y
+      ? -(coordinates.dy + this.image.height)
+      : coordinates.dy;
+
+    return { dx, dy };
   }
 
   static setCoordinates(_dx: number, _dy: number) {
@@ -56,8 +64,21 @@ export class CanvasHandler {
 
   static applyRotation(_rotate: number) {
     CanvasHandler.resetCanvas();
+
+    CanvasHandler.context.save();
+
+    CanvasHandler.context.translate(
+      this.image.width / 2,
+      this.image.height / 2
+    );
     CanvasHandler.context.rotate(_rotate);
-    CanvasHandler.drawImageOnCanvas();
+    CanvasHandler.context.translate(
+      -this.image.width / 2,
+      -this.image.height / 2
+    );
+
+    CanvasHandler.drawImageOnCanvas(0, 0);
+    CanvasHandler.context.restore();
   }
 
   static applyScale(_x: number, _y: number) {
@@ -65,20 +86,20 @@ export class CanvasHandler {
     CanvasHandler.drawImageOnCanvas();
   }
 
-  static applyVerticalFlip(_y = 1) {
-    let width = 0;
-    let height = 0;
+  static applyVerticalFlip(_y = -1) {
+    let width = this.canvasData.coordinates.dx;
+    let height = this.canvasData.coordinates.dy;
 
     this.canvasData.flip.y = !this.canvasData.flip.y;
 
-    if (this.canvasData.flip.x) width = -this.image.width;
-    if (this.canvasData.flip.y) height = -this.image.height;
+    if (this.canvasData.flip.x) width = -(this.image.width + width);
+    if (this.canvasData.flip.y) height = -(this.image.height + height);
 
     this.context.scale(1, _y);
     this.drawImageOnCanvas(width, height);
   }
 
-  static applyHorizontalFlip(_x = 1) {
+  static applyHorizontalFlip(_x = -1) {
     let width = this.canvasData.coordinates.dx;
     let height = this.canvasData.coordinates.dy;
 

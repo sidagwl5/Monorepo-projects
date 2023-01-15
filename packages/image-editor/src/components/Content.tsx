@@ -23,16 +23,19 @@ export const Content = ({ data }: any) => {
     let initialX = 0;
     let initialY = 0;
 
+    let prevX = CanvasHandler.getCoordinates().dx;
+    let prevY = CanvasHandler.getCoordinates().dy;
+
     canvasElement.onmousedown = (e) => {
-      if (
-        CanvasHandler.getCoordinates().dx < e.offsetX &&
-        CanvasHandler.getCoordinates().dy < e.offsetY
-      ) {
-        initialX = e.offsetX;
-        initialY = e.offsetY;
-        draggable = true;
-      }
+      console.log(CanvasHandler.getCoordinates().dx, e.offsetX);
+
+      initialX = e.offsetX;
+      initialY = e.offsetY;
+      draggable = true;
+      CanvasHandler.canvas.style.cursor = 'grabbing';
+      CanvasHandler.canvas.style.border = '2px solid yellow';
     };
+
     canvasElement.onmouseup = (e) => {
       if (draggable) {
         CanvasHandler.setCoordinates(
@@ -40,27 +43,29 @@ export const Content = ({ data }: any) => {
           CanvasHandler.getCoordinates().dy + (e.offsetY - initialY)
         );
         draggable = false;
+        CanvasHandler.canvas.style.cursor = 'default';
+        CanvasHandler.canvas.style.border = 'none';
       }
     };
+
     canvasElement.onmousemove = (e) => {
       if (draggable) {
         CanvasHandler.context.clearRect(
-          0,
-          0,
+          prevX,
+          prevY,
           CanvasHandler.image.width as number,
           CanvasHandler.image.height
         );
 
         CanvasHandler.context.drawImage(
           CanvasHandler.image,
-          CanvasHandler.getCoordinates().dx + (e.offsetX - initialX),
-          CanvasHandler.getCoordinates().dy + (e.offsetY - initialY)
+          CanvasHandler.getCoordinates().dx - (e.offsetX - initialX),
+          CanvasHandler.getCoordinates().dy - (e.offsetY - initialY)
         );
-      }
-    };
 
-    canvasElement.onmouseleave = () => {
-      draggable = false;
+        prevX = CanvasHandler.getCoordinates().dx + (e.offsetX - initialX);
+        prevY = CanvasHandler.getCoordinates().dy + (e.offsetY - initialY);
+      }
     };
   }, []);
 
@@ -89,7 +94,10 @@ export const Content = ({ data }: any) => {
           src="https://c4.wallpaperflare.com/wallpaper/997/210/533/anime-attack-on-titan-attack-on-titan-levi-ackerman-wallpaper-preview.jpg"
         />
 
-        <canvas ref={canvasRef}></canvas>
+        <canvas
+          className={tw(css({ '&': { transition: '0.3s all ease-out' } }))}
+          ref={canvasRef}
+        ></canvas>
       </div>
     </section>
   );
