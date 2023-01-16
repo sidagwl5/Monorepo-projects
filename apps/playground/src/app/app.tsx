@@ -1,7 +1,7 @@
-import { CanvasDraw } from '../experiments/CanvasDraw';
+import { CanvasDrawShapes } from '../experiments/CanvasDrawShapes';
 
 export function App() {
-  return <CanvasDraw />;
+  return <CanvasDrawShapes />;
 }
 
 export default App;

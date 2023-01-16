@@ -1,17 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { css, tw } from 'twind/style';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import GestureIcon from '@mui/icons-material/Gesture';
-import DoneIcon from '@mui/icons-material/Done';
-import { Tooltip } from '@mui/material';
+import Crop32Icon from '@mui/icons-material/Crop32';
+import CropSquareIcon from '@mui/icons-material/CropSquare';
 import DownloadIcon from '@mui/icons-material/Download';
+import GestureIcon from '@mui/icons-material/Gesture';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import PanoramaFishEyeIcon from '@mui/icons-material/PanoramaFishEye';
+import { Tooltip } from '@mui/material';
+import { useEffect, useState, useRef } from 'react';
+import { css, tw } from 'twind/style';
+import InterestsIcon from '@mui/icons-material/Interests';
+import ChangeHistoryIcon from '@mui/icons-material/ChangeHistory';
 
-export const CanvasDraw = () => {
+export const CanvasDrawShapes = () => {
+  const snapshotRef = useRef<any>(null);
   const [drawingState, setDrawingState] = useState<any>({
     width: 1,
     color: 'white',
     eraser: false,
     paint: true,
+    shape: 'rectangle',
   });
 
   useEffect(() => {
@@ -47,37 +53,93 @@ export const CanvasDraw = () => {
     ) as HTMLCanvasElement;
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
-    let drawable = false;
+    let dragging = false;
+    let initialX = 0;
+    let initialY = 0;
+
     canvasElement.onmousedown = (e) => {
-      context.strokeStyle = drawingState.color;
+      context.strokeStyle = 'white';
       context.lineWidth = drawingState.width;
       context.lineJoin = 'round';
       context.lineCap = 'round';
-
-      drawable = true;
-      context.lineTo(e.offsetX, e.offsetY);
-      context.stroke();
-
+      dragging = true;
+      initialX = e.offsetX;
+      initialY = e.offsetY;
+      context.moveTo(initialX, initialY);
       canvasElement.style.border = '1px yellow solid';
     };
 
+    canvasElement.onmousemove = (e) => {
+      if (dragging) {
+        if (!drawingState.eraser) {
+          context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+          if (snapshotRef.current)
+            context.putImageData(snapshotRef.current, 0, 0);
+          if (drawingState.shape === 'rectangle') {
+            context.strokeRect(
+              initialX,
+              initialY,
+              e.offsetX - initialX,
+              e.offsetY - initialY
+            );
+          } else if (drawingState.shape === 'square') {
+            const finalX = e.offsetX - initialX;
+            const finalY = e.offsetY - initialY;
+            const length = finalX > finalY ? finalX : finalY;
+            context.strokeRect(initialX, initialY, length, length);
+          } else if (drawingState.shape === 'circle') {
+            context.beginPath();
+            const finalX = Math.abs(e.offsetX - initialX);
+            const finalY = Math.abs(e.offsetY - initialY);
+            const radius = finalX > finalY ? finalX : finalY;
+            context.arc(initialX, initialY, radius, 0, 2 * Math.PI);
+            context.stroke();
+          } else if (drawingState.shape === 'triangle') {
+            context.beginPath();
+
+            const diffX = e.offsetX - initialX;
+            const diffY = e.offsetY - initialY;
+
+            context.moveTo(initialX, initialY);
+            context.lineTo(initialX + diffX, initialY + diffY);
+            context.moveTo(initialX, initialY);
+            context.lineTo(initialX - diffX, initialY + diffY);
+            context.lineTo(initialX + diffX, initialY + diffY);
+            context.closePath();
+            context.stroke();
+          } else {
+            context.lineTo(e.offsetX, e.offsetY);
+            context.stroke();
+          }
+        } else {
+          context.lineTo(e.offsetX, e.offsetY);
+          context.stroke();
+        }
+      }
+    };
+
     canvasElement.onmouseup = (e) => {
+      dragging = false;
+      snapshotRef.current = context.getImageData(
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      );
       context.beginPath();
-      drawable = false;
       canvasElement.style.border = 'none';
     };
 
     canvasElement.onmouseleave = (e) => {
+      dragging = false;
+      snapshotRef.current = context.getImageData(
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      );
       context.beginPath();
-      drawable = false;
       canvasElement.style.border = 'none';
-    };
-
-    canvasElement.onmousemove = (e) => {
-      if (drawable) {
-        context.lineTo(e.offsetX, e.offsetY);
-        context.stroke();
-      }
     };
   }, [drawingState]);
 
@@ -98,6 +160,7 @@ export const CanvasDraw = () => {
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    snapshotRef.current = null;
   };
 
   return (
@@ -185,68 +248,47 @@ export const CanvasDraw = () => {
           />
         </div>
         {drawingState.paint && (
-          <div className={tw('w-full flex gap-2')}>
-            {['green', 'blue', 'red', 'pink', 'yellow'].map((color) => (
-              <Tooltip arrow title={color} disableInteractive placement="top">
-                <div className={tw('relative cursor-pointer')}>
-                  {color === drawingState.color && (
-                    <div
-                      onClick={() => {
-                        setDrawingState((prev: any) => ({
-                          ...prev,
-                          color,
-                        }));
-                      }}
-                      className={tw(
-                        'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                        css({ background: 'rgba(0, 0, 0, 0.2)' })
-                      )}
-                    >
-                      <DoneIcon className={tw('text-white text-[16px]!')} />
-                    </div>
-                  )}
-                  <div
-                    onClick={() => {
-                      setDrawingState((prev: any) => ({
-                        ...prev,
-                        color,
-                      }));
-                    }}
-                    className={tw('w-6 h-6 rounded-full', `bg-${color}-400`)}
-                  />
-                </div>
-              </Tooltip>
-            ))}
-
-            <Tooltip arrow title={'white'} disableInteractive placement="top">
-              <div className={tw('relative cursor-pointer')}>
-                {'white' === drawingState.color && (
-                  <div
-                    onClick={() => {
-                      setDrawingState((prev: any) => ({
-                        ...prev,
-                        color: 'white',
-                      }));
-                    }}
-                    className={tw(
-                      'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                      css({ background: 'rgba(0, 0, 0, 0.2)' })
-                    )}
-                  >
-                    <DoneIcon className={tw('text-white text-[16px]!')} />
-                  </div>
-                )}
-                <div
+          <div className={tw('w-full flex flex-wrap gap-2 justify-between')}>
+            {[
+              {
+                title: 'rectangle',
+                icon: <Crop32Icon className={tw('text-[20px]!')} />,
+              },
+              {
+                title: 'square',
+                icon: <CropSquareIcon className={tw('text-[20px]!')} />,
+              },
+              {
+                title: 'circle',
+                icon: <PanoramaFishEyeIcon className={tw('text-[20px]!')} />,
+              },
+              {
+                title: 'triangle',
+                icon: <ChangeHistoryIcon className={tw('text-[20px]!')} />,
+              },
+              {
+                title: 'random',
+                icon: <InterestsIcon className={tw('text-[20px]!')} />,
+              },
+            ].map(({ title, icon }) => (
+              <Tooltip arrow title={title} disableInteractive placement="top">
+                <button
                   onClick={() => {
                     setDrawingState((prev: any) => ({
                       ...prev,
-                      color: 'white',
+                      shape: title,
                     }));
                   }}
-                  className={tw('w-6 h-6 rounded-full', `bg-white`)}
-                />
-              </div>
-            </Tooltip>
+                  className={tw(
+                    'w-full text-white py-1 rounded-md w-9 h-9 flex items-center justify-center outline-none!',
+                    css({ background: 'rgba(255, 255, 255, 0.12)' }),
+                    drawingState.shape === title && 'bg-blue-600!'
+                  )}
+                >
+                  {icon}
+                </button>
+              </Tooltip>
+            ))}
           </div>
         )}
 
