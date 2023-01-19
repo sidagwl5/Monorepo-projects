@@ -1,7 +1,7 @@
-import { CanvasDrawShapes } from '../experiments/CanvasDrawShapes';
+import { CanvasMoveMultipleShapes } from '../experiments/CanvasMoveMultipleShapes';
 
 export function App() {
-  return <CanvasDrawShapes />;
+  return <CanvasMoveMultipleShapes />;
 }
 
 export default App;
