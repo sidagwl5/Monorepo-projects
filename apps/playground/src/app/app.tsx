@@ -1,7 +1,7 @@
-import { CanvasMoveMultipleShapes } from '../experiments/CanvasMoveMultipleShapes';
+import { HtmlElementsDragDrop } from '../experiments/HtmlElementsDragDrop';
 
 export function App() {
-  return <CanvasMoveMultipleShapes />;
+  return <HtmlElementsDragDrop />;
 }
 
 export default App;
