@@ -1,7 +1,7 @@
-import { HtmlElementsDragDrop } from '../experiments/HtmlElementsDragDrop';
+import { ResizeShapeInCanvas } from '../experiments/ResizeShapeInCanvas';
 
 export function App() {
-  return <HtmlElementsDragDrop />;
+  return <ResizeShapeInCanvas />;
 }
 
 export default App;
