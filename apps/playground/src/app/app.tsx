@@ -1,7 +1,7 @@
-import { ResizeShapeInCanvas } from '../experiments/ResizeShapeInCanvas';
+import { ResizeShapesInCanvas } from '../experiments/ResizeShapesInCanvas';
 
 export function App() {
-  return <ResizeShapeInCanvas />;
+  return <ResizeShapesInCanvas />;
 }
 
 export default App;
