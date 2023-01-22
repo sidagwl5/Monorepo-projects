@@ -1,7 +1,7 @@
-import { ResizeShapesInCanvas } from '../experiments/ResizeShapesInCanvas';
+import DrawingApp from '../features/drawingApp';
 
 export function App() {
-  return <ResizeShapesInCanvas />;
+  return <DrawingApp />;
 }
 
 export default App;
