@@ -102,7 +102,6 @@ export const CanvasImageCrop = () => {
         ref={imageRef}
         className={tw('hidden')}
         onLoad={(e) => {
-          console.log('onload');
           const context = canvasRef.current.getContext(
             '2d'
           ) as CanvasRenderingContext2D;

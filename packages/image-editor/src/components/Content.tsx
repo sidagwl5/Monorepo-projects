@@ -27,8 +27,6 @@ export const Content = ({ data }: any) => {
     let prevY = CanvasHandler.getCoordinates().dy;
 
     canvasElement.onmousedown = (e) => {
-      console.log(CanvasHandler.getCoordinates().dx, e.offsetX);
-
       initialX = e.offsetX;
       initialY = e.offsetY;
       draggable = true;

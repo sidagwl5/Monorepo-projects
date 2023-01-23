@@ -1,7 +1,7 @@
-import { Switch, Tooltip } from '@mui/material';
-import { useEffect, useState } from 'react';
-import { tw, css } from 'twind/style';
 import DoneIcon from '@mui/icons-material/Done';
+import { Switch, Tooltip } from '@mui/material';
+import { css, tw } from 'twind/style';
+import { useDrawingContext } from '../Context';
 
 const settingsOption = [
   {
@@ -25,36 +25,7 @@ export const DrawSettings = ({
   context: CanvasRenderingContext2D | null;
   canvas: HTMLCanvasElement | null;
 }) => {
-  const [drawSettings, setDrawSettings] = useState({
-    smooth_line: true,
-    round_line_join: true,
-    round_line_cap: true,
-    color: 'white',
-    width: '1',
-  });
-
-  useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-
-    canvasElement.width = window.innerWidth / 2.5;
-    canvasElement.height = (canvasElement.width * 3) / 4;
-  }, []);
-
-  useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-
-    if (context) {
-      context.strokeStyle = drawSettings.color;
-      context.lineWidth = Number(drawSettings.width);
-      context.lineJoin = drawSettings.round_line_join ? 'round' : 'miter';
-      context.lineCap = drawSettings.round_line_cap ? 'round' : 'butt';
-    }
-  }, [drawSettings]);
+  const { drawSettings, setDrawSettings } = useDrawingContext();
 
   return (
     <>

@@ -1,7 +1,7 @@
-import DrawingApp from '../features/drawingApp';
+import { ExportOptions } from '../experiments/ExportOptions';
 
 export function App() {
-  return <DrawingApp />;
+  return <ExportOptions />;
 }
 
 export default App;

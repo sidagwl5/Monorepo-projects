@@ -6,8 +6,6 @@ export const ImageCrop = () => {
   const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
-    console.log(canvasRef.current);
-
     // canvasRef.current.width = 300;
     // canvasRef.current.height = 150;
 

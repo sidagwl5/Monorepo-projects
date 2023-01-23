@@ -41,7 +41,6 @@ class Rectangle extends Shape {
   };
 
   changeDimensions = (_w: number, _h: number) => {
-    console.log({ _h });
     this.w = _w;
     this.h = _h;
   };
