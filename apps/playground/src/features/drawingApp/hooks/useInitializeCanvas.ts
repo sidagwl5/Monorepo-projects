@@ -10,8 +10,20 @@ export const useInitializeCanvas = () => {
       'canvas'
     ) as HTMLCanvasElement;
 
-    canvasElement.width = window.innerWidth / 2.5;
-    canvasElement.height = (canvasElement.width * 3) / 4;
+    const canvasContainer = document.getElementById('canvas_container');
+
+    if (canvasContainer) {
+      const width = canvasContainer.clientWidth;
+      const height = canvasContainer.clientHeight;
+
+      if (width < height) {
+        canvasElement.width = width - 50;
+        canvasElement.height = (3 / 4) * width;
+      } else {
+        canvasElement.height = height - 50;
+        canvasElement.width = (3 / 4) * height;
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -148,11 +160,21 @@ export const useInitializeCanvas = () => {
       backupCanvas.width = canvasElement.width;
       backupCanvas.height = canvasElement.height;
 
+      const canvasContainer = document.getElementById('canvas_container');
+
       backupCanvasContext.drawImage(canvasElement, 0, 0);
+      if (canvasContainer) {
+        const width = canvasContainer.clientWidth;
+        const height = canvasContainer.clientHeight;
 
-      canvasElement.width = window.innerWidth / 2.5;
-      canvasElement.height = (canvasElement.width * 3) / 4;
-
+        if (width < height) {
+          canvasElement.width = width - 50;
+          canvasElement.height = (3 / 4) * width;
+        } else {
+          canvasElement.height = height - 50;
+          canvasElement.width = (3 / 4) * height;
+        }
+      }
       context.drawImage(backupCanvas, 0, 0);
     });
   }, []);

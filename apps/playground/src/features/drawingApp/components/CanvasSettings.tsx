@@ -10,10 +10,17 @@ export const CanvasSettings = () => {
     <div className={tw('text-white flex flex-col gap-1')}>
       <p className={tw('font-medium text-sm capitalize')}>Bg Color</p>
       <div className={tw('w-full flex gap-2')}>
-        {['green', 'blue', 'red', 'pink', 'yellow'].map((bg_color) => (
-          <Tooltip arrow title={bg_color} disableInteractive placement="top">
+        {[
+          { title: 'green', value: 'green' },
+          { title: 'blue', value: 'blue' },
+          { title: 'red', value: 'red' },
+          { title: 'pink', value: 'pink' },
+          { title: 'yellow', value: 'yellow' },
+          { title: 'hazelnut', value: 'rgba(255, 255, 255, 0.08)' },
+        ].map(({ title, value }) => (
+          <Tooltip arrow title={title} disableInteractive placement="top">
             <div className={tw('relative cursor-pointer')}>
-              {bg_color === canvasSettings.bg_color && (
+              {value === canvasSettings.bg_color && (
                 <div
                   onClick={() => {
                     setCanvasSettings((prev: any) => ({
@@ -33,10 +40,15 @@ export const CanvasSettings = () => {
                 onClick={() => {
                   setCanvasSettings((prev: any) => ({
                     ...prev,
-                    bg_color,
+                    bg_color: value,
                   }));
                 }}
-                className={tw('w-6 h-6 rounded-full', `bg-${bg_color}-400`)}
+                className={tw(
+                  'w-6 h-6 rounded-full',
+                  title === 'hazelnut'
+                    ? css({ background: value })
+                    : `bg-${value}-400`
+                )}
               />
             </div>
           </Tooltip>
