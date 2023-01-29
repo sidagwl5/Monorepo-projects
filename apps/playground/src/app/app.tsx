@@ -21,8 +21,6 @@ const SnackbarComponent = forwardRef(
       closeSnackbar(snackbarKey);
     };
 
-    console.log(snackbarKey, message, ref);
-
     return (
       <Alert
         onClose={close}

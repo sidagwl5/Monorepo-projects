@@ -50,7 +50,7 @@ export const DrawingApp = () => {
 
     context.clearRect(0, 0, canvasElement.width, canvasElement.height);
     enqueueSnackbar(
-      { message: 'Good choice', variant: 'success' },
+      { message: 'Canvas reset successfull', variant: 'success' },
       { key: 'reset' }
     );
   };
