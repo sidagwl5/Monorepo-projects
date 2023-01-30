@@ -1,8 +1,8 @@
-import { SnackbarProvider, useSnackbar } from 'notistack';
-import { forwardRef, LegacyRef } from 'react';
-import DrawingApp from '../features/drawingApp';
-import { tw } from 'twind';
 import { Alert } from '@mui/material';
+import { SnackbarProvider, useSnackbar } from 'notistack';
+import { forwardRef } from 'react';
+import { ExportOptions } from '../experiments/ExportOptions';
+import { ScaleElements } from '../experiments/ScaleElements';
 
 const SnackbarComponent = forwardRef(
   (
@@ -47,7 +47,7 @@ export function App() {
         );
       }}
     >
-      <DrawingApp />
+      <ScaleElements />
     </SnackbarProvider>
   );
 }
