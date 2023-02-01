@@ -1,5 +1,23 @@
-import { useDrawingContext } from './../Context';
+import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import { useEffect } from 'react';
+import {
+  browserName,
+  browserVersion,
+  isAndroid,
+  isBrowser,
+  isIOS,
+  isTablet,
+  osName,
+  osVersion,
+  deviceType,
+  deviceDetect,
+  isDesktop,
+  isMobile,
+} from 'react-device-detect';
+import { firestore } from '../configs/firebase.config';
+import { useDrawingContext } from './../Context';
+import jsCookie from 'js-cookie';
+import dayjs from 'dayjs';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
@@ -182,6 +200,40 @@ export const useInitializeCanvas = () => {
       canvasElement.dispatchEvent(mouseDown);
     };
   }, [drawSettings.smooth_line]);
+
+  useEffect(() => {
+    const getAnalytics = async () => {
+      let id;
+
+      if (jsCookie.get('uniqueId')) {
+        id = jsCookie.get('uniqueId');
+      } else {
+        id = crypto.randomUUID();
+        jsCookie.set('uniqueId', id, {
+          expires: dayjs().add(1, 'year').toDate(),
+        });
+      }
+
+      const collectionRef = collection(firestore, 'visitors');
+      const docRef = doc(collectionRef, id);
+      const docDetails = await getDoc(docRef);
+
+      if (!docDetails.exists()) {
+        await setDoc(docRef, {
+          osName,
+          osVersion,
+          deviceType,
+          browserName,
+          browserVersion,
+          visits: 1,
+        });
+      } else {
+        await updateDoc(docRef, { visits: docDetails.data().visits + 1 });
+      }
+    };
+
+    getAnalytics();
+  }, []);
 
   // useEffect(() => {
   //   const canvasElement = document.getElementById(

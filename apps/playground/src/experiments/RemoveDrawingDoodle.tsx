@@ -33,7 +33,6 @@ class Line {
     });
 
     const result = context.isPointInStroke(_x, _y);
-    console.log(result);
 
     canvas.remove();
 
@@ -160,7 +159,7 @@ const RemoveDrawingDoodle = () => {
           const canvasElement = document.getElementById(
             'canvas'
           ) as HTMLCanvasElement;
-          console.log(e.code);
+
           const context = canvasElement.getContext(
             '2d'
           ) as CanvasRenderingContext2D;
