@@ -143,41 +143,69 @@ export const useInitializeCanvas = () => {
         context.stroke();
       }
     };
+
+    canvasElement.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
+
+    canvasElement.ontouchend = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchcancel = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchmove = (e) => {
+      const mouseDown = new MouseEvent('mousemove', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
   }, [drawSettings.smooth_line]);
 
-  useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+  // useEffect(() => {
+  //   const canvasElement = document.getElementById(
+  //     'canvas'
+  //   ) as HTMLCanvasElement;
+  //   const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
-    window.addEventListener('resize', (e) => {
-      const backupCanvas = document.createElement('canvas');
-      const backupCanvasContext = backupCanvas.getContext(
-        '2d'
-      ) as CanvasRenderingContext2D;
+  //   window.addEventListener('resize', (e) => {
+  //     const backupCanvas = document.createElement('canvas');
+  //     const backupCanvasContext = backupCanvas.getContext(
+  //       '2d'
+  //     ) as CanvasRenderingContext2D;
 
-      backupCanvas.width = canvasElement.width;
-      backupCanvas.height = canvasElement.height;
+  //     backupCanvas.width = canvasElement.width;
+  //     backupCanvas.height = canvasElement.height;
 
-      const canvasContainer = document.getElementById('canvas_container');
+  //     const canvasContainer = document.getElementById('canvas_container');
 
-      backupCanvasContext.drawImage(canvasElement, 0, 0);
-      if (canvasContainer) {
-        const width = canvasContainer.clientWidth;
-        const height = canvasContainer.clientHeight;
+  //     backupCanvasContext.drawImage(canvasElement, 0, 0);
+  //     if (canvasContainer) {
+  //       const width = canvasContainer.clientWidth;
+  //       const height = canvasContainer.clientHeight;
 
-        if (width < height) {
-          canvasElement.width = width - 50;
-          canvasElement.height = (3 / 4) * width;
-        } else {
-          canvasElement.height = height - 50;
-          canvasElement.width = (3 / 4) * height;
-        }
-      }
-      context.drawImage(backupCanvas, 0, 0);
-    });
-  }, []);
+  //       if (width < height) {
+  //         canvasElement.width = width - 50;
+  //         canvasElement.height = (3 / 4) * width;
+  //       } else {
+  //         canvasElement.height = height - 50;
+  //         canvasElement.width = (3 / 4) * height;
+  //       }
+  //     }
+  //     context.drawImage(backupCanvas, 0, 0);
+  //   });
+  // }, []);
 
   return null;
 };

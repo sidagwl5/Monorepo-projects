@@ -1,7 +1,7 @@
 import { Alert } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
 import { forwardRef } from 'react';
-import { CanvasDraw } from '../experiments/CanvasDraw';
+import DrawingApp from '../features/drawingApp';
 
 const SnackbarComponent = forwardRef(
   (
@@ -46,7 +46,7 @@ export function App() {
         );
       }}
     >
-      <CanvasDraw />
+      <DrawingApp />
     </SnackbarProvider>
   );
 }

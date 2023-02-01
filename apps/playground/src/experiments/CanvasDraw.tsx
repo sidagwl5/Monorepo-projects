@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { css, tw } from 'twind/style';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import GestureIcon from '@mui/icons-material/Gesture';
 import DoneIcon from '@mui/icons-material/Done';
-import { Tooltip } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
+import GestureIcon from '@mui/icons-material/Gesture';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { Tooltip } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { css, tw } from 'twind/style';
 
 export const CanvasDraw = () => {
   const [drawingState, setDrawingState] = useState<any>({
@@ -68,16 +68,6 @@ export const CanvasDraw = () => {
       canvasElement.style.border = '1px yellow solid';
     };
 
-    canvasElement.ontouchstart = (e) => {
-      e.preventDefault();
-
-      const mouseDown = new MouseEvent('mousedown', {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY,
-      });
-      canvasElement.dispatchEvent(mouseDown);
-    };
-
     canvasElement.onmouseup = (e) => {
       context.beginPath();
       drawable = false;
@@ -95,6 +85,16 @@ export const CanvasDraw = () => {
         context.lineTo(e.offsetX, e.offsetY);
         context.stroke();
       }
+    };
+
+    canvasElement.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
     };
 
     canvasElement.ontouchend = (e) => {
