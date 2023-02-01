@@ -61,6 +61,16 @@ export const CanvasDraw = () => {
       canvasElement.style.border = '1px yellow solid';
     };
 
+    canvasElement.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
+
     canvasElement.onmouseup = (e) => {
       context.beginPath();
       drawable = false;
@@ -78,6 +88,24 @@ export const CanvasDraw = () => {
         context.lineTo(e.offsetX, e.offsetY);
         context.stroke();
       }
+    };
+
+    canvasElement.ontouchend = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchcancel = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchmove = (e) => {
+      const mouseDown = new MouseEvent('mousemove', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
     };
   }, [drawingState]);
 

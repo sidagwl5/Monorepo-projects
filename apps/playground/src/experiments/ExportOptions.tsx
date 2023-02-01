@@ -45,7 +45,25 @@ export const ExportOptions = () => {
       'canvas'
     ) as HTMLCanvasElement;
 
-    const url = canvasElement.toDataURL(dimensions.type, dimensions.quality);
+    const backupCanvas = document.createElement('canvas');
+    const backupContext = backupCanvas.getContext(
+      '2d'
+    ) as CanvasRenderingContext2D;
+
+    backupCanvas.style.width = `${canvasElement.width}px`;
+    backupCanvas.style.height = `${canvasElement.height}px`;
+
+    backupCanvas.width = canvasElement.width * 6;
+    backupCanvas.height = canvasElement.height * 6;
+
+    backupContext.scale(6, 6);
+    backupContext.fillStyle = 'white';
+    backupContext.fillRect(0, 0, backupCanvas.width, backupCanvas.height);
+
+    backupContext.fillStyle = 'blue';
+    backupContext.fillRect(50, 50, 100, 50);
+
+    const url = backupCanvas.toDataURL(dimensions.type, dimensions.quality);
     const anchor = document.createElement('a');
 
     anchor.download = `drawing.${dimensions.type}`;
