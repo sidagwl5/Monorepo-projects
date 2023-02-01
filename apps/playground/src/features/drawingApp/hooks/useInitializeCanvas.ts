@@ -11,18 +11,28 @@ export const useInitializeCanvas = () => {
     ) as HTMLCanvasElement;
 
     const canvasContainer = document.getElementById('canvas_container');
+    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
     if (canvasContainer) {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
+      const scale = 3;
       if (width < height) {
-        canvasElement.width = width - 50;
-        canvasElement.height = (3 / 4) * width;
+        canvasElement.style.width = `${width - 50}px`;
+        canvasElement.style.height = `${(3 / 4) * width}px`;
+
+        canvasElement.width = (width - 50) * scale;
+        canvasElement.height = (3 / 4) * width * scale;
       } else {
-        canvasElement.height = height - 50;
-        canvasElement.width = (3 / 4) * height;
+        canvasElement.style.height = `${height - 50}px`;
+        canvasElement.style.width = `${(3 / 4) * height}px`;
+
+        canvasElement.height = (height - 50) * scale;
+        canvasElement.width = (3 / 4) * height * scale;
       }
+
+      context.scale(scale, scale);
     }
   }, []);
 
