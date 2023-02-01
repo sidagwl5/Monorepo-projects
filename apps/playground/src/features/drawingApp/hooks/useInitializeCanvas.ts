@@ -11,6 +11,8 @@ import {
 } from 'react-device-detect';
 import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
+import penPng from '../../../assets/pen.png';
+import eraserPng from '../../../assets/eraser.png';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
@@ -52,9 +54,13 @@ export const useInitializeCanvas = () => {
       'canvas'
     ) as HTMLCanvasElement;
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-    if (currentTab === 'eraser')
+    if (currentTab === 'eraser') {
+      canvasElement.style.cursor = `url(${eraserPng}), auto`;
       context.globalCompositeOperation = 'destination-out';
-    else context.globalCompositeOperation = 'source-over';
+    } else {
+      canvasElement.style.cursor = `url(${penPng}), auto`;
+      context.globalCompositeOperation = 'source-over';
+    }
   }, [currentTab]);
 
   useEffect(() => {

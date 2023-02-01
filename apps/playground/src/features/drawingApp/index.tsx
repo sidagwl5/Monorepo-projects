@@ -19,7 +19,7 @@ export const DrawingApp = () => {
   const isTablet = useMedia('(max-width: 768px)');
   const [sidebarOpen, setSidebarOpen] = useState(!isTablet);
   const { enqueueSnackbar } = useSnackbar();
-  const { setCurrentTab, currentTab } = useDrawingContext();
+  const { setCurrentTab, currentTab, canvasSettings } = useDrawingContext();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
@@ -162,8 +162,27 @@ export const DrawingApp = () => {
             const canvasElement = document.getElementById(
               'canvas'
             ) as HTMLCanvasElement;
+            const context = canvasElement.getContext(
+              '2d'
+            ) as CanvasRenderingContext2D;
+
+            const imageData = context.getImageData(
+              0,
+              0,
+              canvasElement.width,
+              canvasElement.height
+            );
+
+            context.save();
+
+            context.globalCompositeOperation = 'destination-over';
+            context.fillStyle = canvasSettings.bg_color;
+            context.fillRect(0, 0, canvasElement.width, canvasElement.height);
 
             const imageURI = canvasElement.toDataURL('image/jpeg', 1);
+
+            context.restore();
+            context.putImageData(imageData, 0, 0);
 
             const anchorElement = document.createElement('a');
             anchorElement.href = imageURI;
