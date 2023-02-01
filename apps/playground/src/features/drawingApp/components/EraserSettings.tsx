@@ -5,7 +5,7 @@ export const EraserSettings = () => {
   const { eraserSettings, setEraserSettings } = useDrawingContext();
 
   return (
-    <div className={tw('text-white flex flex-col gap-1')}>
+    <div className={tw('text-white flex flex-col gap-2')}>
       <p className={tw('font-medium text-sm capitalize')}>Eraser width</p>
       <input
         className={tw(

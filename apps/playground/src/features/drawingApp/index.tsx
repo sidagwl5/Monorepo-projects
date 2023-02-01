@@ -1,22 +1,23 @@
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import DownloadIcon from '@mui/icons-material/Download';
 import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import GestureIcon from '@mui/icons-material/Gesture';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { Tooltip } from '@mui/material';
-import { useCallback, useRef, useState } from 'react';
+import { useSnackbar } from 'notistack';
+import { useCallback, useRef, useState, useEffect } from 'react';
 import { css, tw } from 'twind/style';
 import { useDrawingContext } from './Context';
-import { DefaultLayout } from './Layouts/DefaultLayout';
 import { CanvasSettings } from './components/CanvasSettings';
 import DrawSettings from './components/DrawSettings';
 import { EraserSettings } from './components/EraserSettings';
 import { useInitializeCanvas } from './hooks/useInitializeCanvas';
-import { useSnackbar } from 'notistack';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { useMedia } from 'react-use';
 
 export const DrawingApp = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const isTablet = useMedia('(max-width: 768px)');
+  const [sidebarOpen, setSidebarOpen] = useState(!isTablet);
   const { enqueueSnackbar } = useSnackbar();
   const { setCurrentTab, currentTab } = useDrawingContext();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -40,6 +41,10 @@ export const DrawingApp = () => {
     },
   ];
 
+  useEffect(() => {
+    setSidebarOpen(!isTablet);
+  }, [isTablet]);
+
   useInitializeCanvas();
 
   const reset = () => {
@@ -58,9 +63,11 @@ export const DrawingApp = () => {
   return (
     <section
       className={tw(
-        'flex w-full h-[600px] overflow-hidden relative max-w-[1200px] m-6 w-full items-center justify-center'
+        'flex w-full overflow-hidden relative max-w-[1300px] m-3 md:m-6 w-full items-center justify-center',
+        css({ height: 'calc(100% - 15vh)' })
       )}
     >
+      {isTablet && <div className={tw('w-[50px]')} />}
       <div
         className={tw(
           'h-full max-w-[250px] w-full transition left-0 p-4 flex bg-[#3c2641] flex-col gap-6 absolute md:relative',
@@ -89,7 +96,7 @@ export const DrawingApp = () => {
           <div
             onClick={setSidebarOpen.bind(this, !sidebarOpen)}
             className={tw(
-              'text-white ml-auto rotate-0 md:hidden',
+              'text-white cursor-pointer ml-auto rotate-0 md:hidden',
               !sidebarOpen && 'rotate-180',
               css({ transition: '0.2s all ease-out' })
             )}

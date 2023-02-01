@@ -1,23 +1,16 @@
+import dayjs from 'dayjs';
 import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import jsCookie from 'js-cookie';
 import { useEffect } from 'react';
 import {
   browserName,
   browserVersion,
-  isAndroid,
-  isBrowser,
-  isIOS,
-  isTablet,
+  deviceType,
   osName,
   osVersion,
-  deviceType,
-  deviceDetect,
-  isDesktop,
-  isMobile,
 } from 'react-device-detect';
 import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
-import jsCookie from 'js-cookie';
-import dayjs from 'dayjs';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
@@ -38,16 +31,16 @@ export const useInitializeCanvas = () => {
       const scale = 3;
       if (width < height) {
         canvasElement.style.width = `${width - 50}px`;
-        canvasElement.style.height = `${(3 / 4) * width}px`;
+        canvasElement.style.height = `${(5 / 6) * width}px`;
 
         canvasElement.width = (width - 50) * scale;
-        canvasElement.height = (3 / 4) * width * scale;
+        canvasElement.height = (5 / 6) * width * scale;
       } else {
         canvasElement.style.height = `${height - 50}px`;
-        canvasElement.style.width = `${(3 / 4) * height}px`;
+        canvasElement.style.width = `${(5 / 6) * height}px`;
 
         canvasElement.height = (height - 50) * scale;
-        canvasElement.width = (3 / 4) * height * scale;
+        canvasElement.width = (5 / 6) * height * scale;
       }
 
       context.scale(scale, scale);
