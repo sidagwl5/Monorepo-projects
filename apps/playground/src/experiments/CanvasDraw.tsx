@@ -20,25 +20,32 @@ export const CanvasDraw = () => {
     ) as HTMLCanvasElement;
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
-    canvasElement.width = window.innerWidth / 2.5;
-    canvasElement.height = (canvasElement.width * 3) / 4;
+    const scale = 4;
 
-    window.addEventListener('resize', (e) => {
-      const backupCanvas = document.createElement('canvas');
-      const backupCanvasContext = backupCanvas.getContext(
-        '2d'
-      ) as CanvasRenderingContext2D;
+    canvasElement.style.width = `${window.innerWidth / 2.5}px`;
+    canvasElement.style.height = `${((window.innerWidth / 2.5) * 3) / 4}px`;
 
-      backupCanvas.width = canvasElement.width;
-      backupCanvas.height = canvasElement.height;
+    canvasElement.width = (window.innerWidth / 2.5) * scale;
+    canvasElement.height = (((window.innerWidth / 2.5) * 3) / 4) * scale;
 
-      backupCanvasContext.drawImage(canvasElement, 0, 0);
+    context.scale(scale, scale);
 
-      canvasElement.width = window.innerWidth / 2.5;
-      canvasElement.height = (canvasElement.width * 3) / 4;
+    // window.addEventListener('resize', (e) => {
+    //   const backupCanvas = document.createElement('canvas');
+    //   const backupCanvasContext = backupCanvas.getContext(
+    //     '2d'
+    //   ) as CanvasRenderingContext2D;
 
-      context.drawImage(backupCanvas, 0, 0);
-    });
+    //   backupCanvas.width = canvasElement.width;
+    //   backupCanvas.height = canvasElement.height;
+
+    //   backupCanvasContext.drawImage(canvasElement, 0, 0);
+
+    //   canvasElement.width = window.innerWidth / 2.5;
+    //   canvasElement.height = (canvasElement.width * 3) / 4;
+
+    //   context.drawImage(backupCanvas, 0, 0);
+    // });
   }, []);
 
   useEffect(() => {
