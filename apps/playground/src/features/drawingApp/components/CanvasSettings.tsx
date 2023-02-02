@@ -7,7 +7,7 @@ export const CanvasSettings = () => {
   const { canvasSettings, setCanvasSettings } = useDrawingContext();
 
   return (
-    <div className={tw('text-white flex flex-col gap-1')}>
+    <div className={tw('text-white flex flex-col gap-2')}>
       <p className={tw('font-medium text-sm capitalize')}>Bg Color</p>
       <div className={tw('w-full flex gap-2')}>
         {[

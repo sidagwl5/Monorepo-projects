@@ -4,8 +4,11 @@ import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
   server: {
-    port: 4200,
+    port: 5000,
     host: 'localhost',
+  },
+  optimizeDeps: {
+    exclude: ['firebase/firestore', 'firebase/app'],
   },
 
   plugins: [
@@ -14,15 +17,6 @@ export default defineConfig({
       root: '../../',
     }),
   ],
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [
-  //    viteTsConfigPaths({
-  //      root: '../../',
-  //    }),
-  //  ],
-  // },
 
   test: {
     globals: true,

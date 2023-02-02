@@ -29,7 +29,7 @@ export const DrawSettings = ({
 
   return (
     <>
-      <div className={tw('text-white flex flex-col gap-1')}>
+      <div className={tw('text-white flex flex-col gap-2')}>
         <p className={tw('font-medium text-sm capitalize')}>stroke width</p>
         <input
           className={tw(

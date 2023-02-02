@@ -1,5 +1,18 @@
-import { useDrawingContext } from './../Context';
+import dayjs from 'dayjs';
+import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
+import jsCookie from 'js-cookie';
 import { useEffect } from 'react';
+import {
+  browserName,
+  browserVersion,
+  deviceType,
+  osName,
+  osVersion,
+} from 'react-device-detect';
+import { firestore } from '../configs/firebase.config';
+import { useDrawingContext } from './../Context';
+import penPng from '../../../assets/pen.png';
+import eraserPng from '../../../assets/eraser.png';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
@@ -11,18 +24,28 @@ export const useInitializeCanvas = () => {
     ) as HTMLCanvasElement;
 
     const canvasContainer = document.getElementById('canvas_container');
+    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
     if (canvasContainer) {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
+      const scale = 3;
       if (width < height) {
-        canvasElement.width = width - 50;
-        canvasElement.height = (3 / 4) * width;
+        canvasElement.style.width = `${width - 50}px`;
+        canvasElement.style.height = `${(5 / 6) * width}px`;
+
+        canvasElement.width = (width - 50) * scale;
+        canvasElement.height = (5 / 6) * width * scale;
       } else {
-        canvasElement.height = height - 50;
-        canvasElement.width = (3 / 4) * height;
+        canvasElement.style.height = `${height - 50}px`;
+        canvasElement.style.width = `${(5 / 6) * height}px`;
+
+        canvasElement.height = (height - 50) * scale;
+        canvasElement.width = (5 / 6) * height * scale;
       }
+
+      context.scale(scale, scale);
     }
   }, []);
 
@@ -31,9 +54,13 @@ export const useInitializeCanvas = () => {
       'canvas'
     ) as HTMLCanvasElement;
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-    if (currentTab === 'eraser')
+    if (currentTab === 'eraser') {
+      canvasElement.style.cursor = `url(${eraserPng}), auto`;
       context.globalCompositeOperation = 'destination-out';
-    else context.globalCompositeOperation = 'source-over';
+    } else {
+      canvasElement.style.cursor = `url(${penPng}), auto`;
+      context.globalCompositeOperation = 'source-over';
+    }
   }, [currentTab]);
 
   useEffect(() => {
@@ -143,41 +170,103 @@ export const useInitializeCanvas = () => {
         context.stroke();
       }
     };
+
+    canvasElement.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
+
+    canvasElement.ontouchend = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchcancel = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchmove = (e) => {
+      const mouseDown = new MouseEvent('mousemove', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
   }, [drawSettings.smooth_line]);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const getAnalytics = async () => {
+      let id;
 
-    window.addEventListener('resize', (e) => {
-      const backupCanvas = document.createElement('canvas');
-      const backupCanvasContext = backupCanvas.getContext(
-        '2d'
-      ) as CanvasRenderingContext2D;
-
-      backupCanvas.width = canvasElement.width;
-      backupCanvas.height = canvasElement.height;
-
-      const canvasContainer = document.getElementById('canvas_container');
-
-      backupCanvasContext.drawImage(canvasElement, 0, 0);
-      if (canvasContainer) {
-        const width = canvasContainer.clientWidth;
-        const height = canvasContainer.clientHeight;
-
-        if (width < height) {
-          canvasElement.width = width - 50;
-          canvasElement.height = (3 / 4) * width;
-        } else {
-          canvasElement.height = height - 50;
-          canvasElement.width = (3 / 4) * height;
-        }
+      if (jsCookie.get('uniqueId')) {
+        id = jsCookie.get('uniqueId');
+      } else {
+        id = crypto.randomUUID();
+        jsCookie.set('uniqueId', id, {
+          expires: dayjs().add(1, 'year').toDate(),
+        });
       }
-      context.drawImage(backupCanvas, 0, 0);
-    });
+
+      const collectionRef = collection(firestore, 'visitors');
+      const docRef = doc(collectionRef, id);
+      const docDetails = await getDoc(docRef);
+
+      if (!docDetails.exists()) {
+        await setDoc(docRef, {
+          osName,
+          osVersion,
+          deviceType,
+          browserName,
+          browserVersion,
+          visits: 1,
+        });
+      } else {
+        await updateDoc(docRef, { visits: docDetails.data().visits + 1 });
+      }
+    };
+
+    getAnalytics();
   }, []);
+
+  // useEffect(() => {
+  //   const canvasElement = document.getElementById(
+  //     'canvas'
+  //   ) as HTMLCanvasElement;
+  //   const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+
+  //   window.addEventListener('resize', (e) => {
+  //     const backupCanvas = document.createElement('canvas');
+  //     const backupCanvasContext = backupCanvas.getContext(
+  //       '2d'
+  //     ) as CanvasRenderingContext2D;
+
+  //     backupCanvas.width = canvasElement.width;
+  //     backupCanvas.height = canvasElement.height;
+
+  //     const canvasContainer = document.getElementById('canvas_container');
+
+  //     backupCanvasContext.drawImage(canvasElement, 0, 0);
+  //     if (canvasContainer) {
+  //       const width = canvasContainer.clientWidth;
+  //       const height = canvasContainer.clientHeight;
+
+  //       if (width < height) {
+  //         canvasElement.width = width - 50;
+  //         canvasElement.height = (3 / 4) * width;
+  //       } else {
+  //         canvasElement.height = height - 50;
+  //         canvasElement.width = (3 / 4) * height;
+  //       }
+  //     }
+  //     context.drawImage(backupCanvas, 0, 0);
+  //   });
+  // }, []);
 
   return null;
 };

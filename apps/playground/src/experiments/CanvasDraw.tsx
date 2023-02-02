@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { css, tw } from 'twind/style';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import GestureIcon from '@mui/icons-material/Gesture';
 import DoneIcon from '@mui/icons-material/Done';
-import { Tooltip } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
+import GestureIcon from '@mui/icons-material/Gesture';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { Tooltip } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { css, tw } from 'twind/style';
 
 export const CanvasDraw = () => {
   const [drawingState, setDrawingState] = useState<any>({
@@ -20,25 +20,32 @@ export const CanvasDraw = () => {
     ) as HTMLCanvasElement;
     const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
-    canvasElement.width = window.innerWidth / 2.5;
-    canvasElement.height = (canvasElement.width * 3) / 4;
+    const scale = 4;
 
-    window.addEventListener('resize', (e) => {
-      const backupCanvas = document.createElement('canvas');
-      const backupCanvasContext = backupCanvas.getContext(
-        '2d'
-      ) as CanvasRenderingContext2D;
+    canvasElement.style.width = `${window.innerWidth / 2.5}px`;
+    canvasElement.style.height = `${((window.innerWidth / 2.5) * 3) / 4}px`;
 
-      backupCanvas.width = canvasElement.width;
-      backupCanvas.height = canvasElement.height;
+    canvasElement.width = (window.innerWidth / 2.5) * scale;
+    canvasElement.height = (((window.innerWidth / 2.5) * 3) / 4) * scale;
 
-      backupCanvasContext.drawImage(canvasElement, 0, 0);
+    context.scale(scale, scale);
 
-      canvasElement.width = window.innerWidth / 2.5;
-      canvasElement.height = (canvasElement.width * 3) / 4;
+    // window.addEventListener('resize', (e) => {
+    //   const backupCanvas = document.createElement('canvas');
+    //   const backupCanvasContext = backupCanvas.getContext(
+    //     '2d'
+    //   ) as CanvasRenderingContext2D;
 
-      context.drawImage(backupCanvas, 0, 0);
-    });
+    //   backupCanvas.width = canvasElement.width;
+    //   backupCanvas.height = canvasElement.height;
+
+    //   backupCanvasContext.drawImage(canvasElement, 0, 0);
+
+    //   canvasElement.width = window.innerWidth / 2.5;
+    //   canvasElement.height = (canvasElement.width * 3) / 4;
+
+    //   context.drawImage(backupCanvas, 0, 0);
+    // });
   }, []);
 
   useEffect(() => {
@@ -61,6 +68,16 @@ export const CanvasDraw = () => {
       canvasElement.style.border = '1px yellow solid';
     };
 
+    canvasElement.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
+    };
+
     canvasElement.onmouseup = (e) => {
       context.beginPath();
       drawable = false;
@@ -78,6 +95,24 @@ export const CanvasDraw = () => {
         context.lineTo(e.offsetX, e.offsetY);
         context.stroke();
       }
+    };
+
+    canvasElement.ontouchend = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchcancel = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvasElement.dispatchEvent(mouseEnd);
+    };
+
+    canvasElement.ontouchmove = (e) => {
+      const mouseDown = new MouseEvent('mousemove', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvasElement.dispatchEvent(mouseDown);
     };
   }, [drawingState]);
 
