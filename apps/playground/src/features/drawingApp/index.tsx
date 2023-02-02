@@ -63,8 +63,8 @@ export const DrawingApp = () => {
   return (
     <section
       className={tw(
-        'flex w-full overflow-hidden relative max-w-[1300px] m-3 md:m-6 w-full items-center justify-center',
-        css({ height: 'calc(100% - 15vh)' })
+        'flex w-full overflow-hidden relative max-w-[1300px] md:m-6 w-full items-center justify-center',
+        isTablet ? 'h-full' : css({ height: 'calc(100% - 15vh)' })
       )}
     >
       {isTablet && <div className={tw('w-[50px]')} />}
@@ -153,57 +153,63 @@ export const DrawingApp = () => {
 
       <div
         className={tw(
-          'h-full max-w-[100px] p-2 flex flex-col gap-2',
-          css({ background: 'rgba(255, 255, 255, 0.15)' })
+          !isTablet
+            ? 'h-full max-w-[100px] p-2 flex flex-col gap-2 bg-white bg-opacity-20'
+            : 'fixed py-2 px-5 flex gap-4 bottom-3 right-3 border-1 rounded-full border-white border-opacity-30'
         )}
       >
-        <button
-          onClick={() => {
-            const canvasElement = document.getElementById(
-              'canvas'
-            ) as HTMLCanvasElement;
-            const context = canvasElement.getContext(
-              '2d'
-            ) as CanvasRenderingContext2D;
+        <Tooltip title="Export as jpeg" arrow placement="top">
+          <button
+            onClick={() => {
+              const canvasElement = document.getElementById(
+                'canvas'
+              ) as HTMLCanvasElement;
+              const context = canvasElement.getContext(
+                '2d'
+              ) as CanvasRenderingContext2D;
 
-            const imageData = context.getImageData(
-              0,
-              0,
-              canvasElement.width,
-              canvasElement.height
-            );
+              const imageData = context.getImageData(
+                0,
+                0,
+                canvasElement.width,
+                canvasElement.height
+              );
 
-            context.save();
+              context.save();
 
-            context.globalCompositeOperation = 'destination-over';
-            context.fillStyle = canvasSettings.bg_color;
-            context.fillRect(0, 0, canvasElement.width, canvasElement.height);
+              context.globalCompositeOperation = 'destination-over';
+              context.fillStyle = canvasSettings.bg_color;
+              context.fillRect(0, 0, canvasElement.width, canvasElement.height);
 
-            const imageURI = canvasElement.toDataURL('image/jpeg', 1);
+              const imageURI = canvasElement.toDataURL('image/jpeg', 1);
 
-            context.restore();
-            context.putImageData(imageData, 0, 0);
+              context.restore();
+              context.putImageData(imageData, 0, 0);
 
-            const anchorElement = document.createElement('a');
-            anchorElement.href = imageURI;
-            anchorElement.download = 'Drawing.jpeg';
+              const anchorElement = document.createElement('a');
+              anchorElement.href = imageURI;
+              anchorElement.download = 'Drawing.jpeg';
 
-            anchorElement.click();
-          }}
-          className={tw(
-            'w-full text-white py-1 rounded-md w-9 h-9 bg-green-500 ml-auto flex items-center justify-center outline-none!'
-          )}
-        >
-          <DownloadIcon className={tw('text-[20px]!')} />
-        </button>
-        <button
-          onClick={reset}
-          className={tw(
-            'w-full text-white py-1 rounded-md w-9 h-9 bg-red-500 ml-auto flex items-center justify-center outline-none!'
-          )}
-        >
-          <RestartAltIcon className={tw('text-[20px]!')} />
-        </button>
+              anchorElement.click();
+            }}
+            className={tw(
+              'w-full text-white py-1 rounded-md w-9 h-9 bg-green-500 ml-auto flex items-center justify-center outline-none!'
+            )}
+          >
+            <DownloadIcon className={tw('text-[20px]!')} />
+          </button>
+        </Tooltip>
+
+        <Tooltip title="Reset Canvas" arrow placement="top">
+          <button
+            onClick={reset}
+            className={tw(
+              'w-full text-white py-1 rounded-md w-9 h-9 bg-red-500 ml-auto flex items-center justify-center outline-none!'
+            )}
+          >
+            <RestartAltIcon className={tw('text-[20px]!')} />
+          </button>
+        </Tooltip>
       </div>
     </section>
   );
