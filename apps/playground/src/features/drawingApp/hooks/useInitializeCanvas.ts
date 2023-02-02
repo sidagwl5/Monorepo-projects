@@ -50,6 +50,7 @@ export const useInitializeCanvas = () => {
       // }
 
       context.scale(scale, scale);
+      Canvas.storeImageData();
     }
   }, []);
 

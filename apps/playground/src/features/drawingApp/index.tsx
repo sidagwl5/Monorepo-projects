@@ -14,9 +14,11 @@ import { Canvas } from './classes/canvas.class';
 import { CanvasSettings } from './components/CanvasSettings';
 import DrawSettings from './components/DrawSettings';
 import { EraserSettings } from './components/EraserSettings';
+import ExportDialog from './components/ExportDialog';
 import { useInitializeCanvas } from './hooks/useInitializeCanvas';
 
 export const DrawingApp = () => {
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
   const isTablet = useMedia('(max-width: 768px)');
   const [sidebarOpen, setSidebarOpen] = useState(!isTablet);
   const { enqueueSnackbar } = useSnackbar();
@@ -156,39 +158,10 @@ export const DrawingApp = () => {
           </button>
         </Tooltip> */}
 
-        <Tooltip title="Export as jpeg" arrow placement="top">
+        <Tooltip title="Export as image" arrow placement="top">
           <button
             onClick={() => {
-              const canvasElement = document.getElementById(
-                'canvas'
-              ) as HTMLCanvasElement;
-              const context = canvasElement.getContext(
-                '2d'
-              ) as CanvasRenderingContext2D;
-
-              const imageData = context.getImageData(
-                0,
-                0,
-                canvasElement.width,
-                canvasElement.height
-              );
-
-              context.save();
-
-              context.globalCompositeOperation = 'destination-over';
-              context.fillStyle = canvasSettings.bg_color;
-              context.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-              const imageURI = canvasElement.toDataURL('image/jpeg', 1);
-
-              context.restore();
-              context.putImageData(imageData, 0, 0);
-
-              const anchorElement = document.createElement('a');
-              anchorElement.href = imageURI;
-              anchorElement.download = 'Drawing.jpeg';
-
-              anchorElement.click();
+              setIsExportDialogOpen(true);
             }}
             className={tw(
               'w-full text-white py-1 rounded-md w-9 h-9 bg-green-500 ml-auto flex items-center justify-center outline-none!'
@@ -209,6 +182,9 @@ export const DrawingApp = () => {
           </button>
         </Tooltip>
       </div>
+      {isExportDialogOpen && (
+        <ExportDialog setIsExportDialogOpen={setIsExportDialogOpen} />
+      )}
     </section>
   );
 };

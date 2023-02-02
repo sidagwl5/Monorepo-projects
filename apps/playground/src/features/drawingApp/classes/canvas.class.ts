@@ -19,6 +19,7 @@ export class Canvas {
   }
 
   static storeImageData() {
+    console.log('store');
     this.imageData = this.context.getImageData(
       0,
       0,
