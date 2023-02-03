@@ -6,22 +6,21 @@ import GestureIcon from '@mui/icons-material/Gesture';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { Tooltip } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useCallback, useRef, useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useMedia } from 'react-use';
 import { css, tw } from 'twind/style';
 import { useDrawingContext } from './Context';
+import { Canvas } from './classes/canvas.class';
 import { CanvasSettings } from './components/CanvasSettings';
 import DrawSettings from './components/DrawSettings';
 import { EraserSettings } from './components/EraserSettings';
 import { useInitializeCanvas } from './hooks/useInitializeCanvas';
-import { useMedia } from 'react-use';
 
 export const DrawingApp = () => {
   const isTablet = useMedia('(max-width: 768px)');
   const [sidebarOpen, setSidebarOpen] = useState(!isTablet);
   const { enqueueSnackbar } = useSnackbar();
   const { setCurrentTab, currentTab, canvasSettings } = useDrawingContext();
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const contextRef = useRef<CanvasRenderingContext2D | null>(null);
 
   const tabOptions = [
     {
@@ -48,12 +47,7 @@ export const DrawingApp = () => {
   useInitializeCanvas();
 
   const reset = () => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-
-    context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+    Canvas.clearCanvas();
     enqueueSnackbar(
       { message: 'Canvas reset successfull', variant: 'success' },
       { key: 'reset' }
@@ -114,12 +108,7 @@ export const DrawingApp = () => {
         >
           {currentTab === 'eraser' && <EraserSettings />}
 
-          {currentTab === 'draw' && (
-            <DrawSettings
-              context={contextRef.current}
-              canvas={canvasRef.current}
-            />
-          )}
+          {currentTab === 'draw' && <DrawSettings />}
 
           {currentTab === 'canvas' && <CanvasSettings />}
         </div>
@@ -133,14 +122,7 @@ export const DrawingApp = () => {
         )}
       >
         <canvas
-          ref={useCallback((_ref: HTMLCanvasElement | null) => {
-            if (_ref) {
-              canvasRef.current = _ref;
-              contextRef.current = _ref?.getContext('2d', {
-                willReadFrequently: true,
-              });
-            }
-          }, [])}
+          ref={Canvas.initialize}
           className={tw(
             css({
               transition: '0.3s all ease-out',
@@ -158,6 +140,22 @@ export const DrawingApp = () => {
             : 'fixed py-2 px-5 flex gap-4 bottom-3 right-3 border-1 rounded-full border-white border-opacity-30'
         )}
       >
+        {/* <Tooltip title="Save progress" arrow placement="top">
+          <button
+            onClick={() => {
+              localStorage.setItem(
+                'progress',
+                Canvas.getElements().canvas.toDataURL('image/png', 1)
+              );
+            }}
+            className={tw(
+              'w-full text-white py-1 rounded-md w-9 h-9 bg-green-500 ml-auto flex items-center justify-center outline-none!'
+            )}
+          >
+            <SaveIcon className={tw('text-[20px]!')} />
+          </button>
+        </Tooltip> */}
+
         <Tooltip title="Export as jpeg" arrow placement="top">
           <button
             onClick={() => {

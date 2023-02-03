@@ -5,7 +5,11 @@ import { useDrawingContext } from '../Context';
 
 const settingsOption = [
   {
-    title: 'Smooth Line',
+    title: 'Straight Lines',
+    key: 'line',
+  },
+  {
+    title: 'Smooth Draw',
     key: 'smooth_line',
   },
   {
@@ -18,13 +22,7 @@ const settingsOption = [
   },
 ];
 
-export const DrawSettings = ({
-  context,
-  canvas,
-}: {
-  context: CanvasRenderingContext2D | null;
-  canvas: HTMLCanvasElement | null;
-}) => {
+export const DrawSettings = () => {
   const { drawSettings, setDrawSettings } = useDrawingContext();
 
   return (
