@@ -13,18 +13,15 @@ import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
 import penPng from '../../../assets/pen.png';
 import eraserPng from '../../../assets/eraser.png';
+import { Canvas } from '../classes/canvas.class';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
     useDrawingContext();
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-
+    const { canvas, context } = Canvas.getElements();
     const canvasContainer = document.getElementById('canvas_container');
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
 
     if (canvasContainer) {
       const width = canvasContainer.clientWidth;
@@ -32,42 +29,44 @@ export const useInitializeCanvas = () => {
 
       const scale = 3;
       if (width < height) {
-        canvasElement.style.width = `${width - 50}px`;
-        canvasElement.style.height = `${(5 / 6) * width}px`;
+        canvas.style.width = `${width - 50}px`;
+        canvas.style.height = `${(5 / 6) * width}px`;
 
-        canvasElement.width = (width - 50) * scale;
-        canvasElement.height = (5 / 6) * width * scale;
+        canvas.width = (width - 50) * scale;
+        canvas.height = (5 / 6) * width * scale;
       } else {
-        canvasElement.style.height = `${height - 50}px`;
-        canvasElement.style.width = `${(5 / 6) * height}px`;
+        canvas.style.height = `${height - 50}px`;
+        canvas.style.width = `${(5 / 6) * height}px`;
 
-        canvasElement.height = (height - 50) * scale;
-        canvasElement.width = (5 / 6) * height * scale;
+        canvas.height = (height - 50) * scale;
+        canvas.width = (5 / 6) * height * scale;
       }
+
+      // const progress = localStorage.getItem('progress');
+      // if (progress) {
+      //   Canvas.loadImgURLToCanvas(progress).finally(() => {
+      //     context.scale(scale, scale);
+      //   });
+      // }
 
       context.scale(scale, scale);
     }
   }, []);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const { canvas, context } = Canvas.getElements();
+
     if (currentTab === 'eraser') {
-      canvasElement.style.cursor = `url(${eraserPng}), auto`;
+      canvas.style.cursor = `url(${eraserPng}), auto`;
       context.globalCompositeOperation = 'destination-out';
     } else {
-      canvasElement.style.cursor = `url(${penPng}), auto`;
+      canvas.style.cursor = `url(${penPng}), auto`;
       context.globalCompositeOperation = 'source-over';
     }
   }, [currentTab]);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const { context } = Canvas.getElements();
 
     if (currentTab === 'eraser') {
       context.lineWidth = Number(eraserSettings.width);
@@ -77,10 +76,7 @@ export const useInitializeCanvas = () => {
   }, [currentTab, drawSettings.width, eraserSettings.width]);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const { context } = Canvas.getElements();
 
     if (context) {
       context.strokeStyle = drawSettings.color;
@@ -90,29 +86,25 @@ export const useInitializeCanvas = () => {
   }, [drawSettings]);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
+    const { canvas } = Canvas.getElements();
 
-    canvasElement.style.backgroundColor = canvasSettings.bg_color;
+    canvas.style.backgroundColor = canvasSettings.bg_color;
   }, [canvasSettings.bg_color]);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const { context, canvas } = Canvas.getElements();
 
     let coordinates: any[] = [];
-    let snapshot: ImageData | null = null;
     let drawable = false;
+    let points: any[] = [];
 
     const onDrawingStop = () => {
       if (drawable) {
         if (coordinates.length > 1 && drawSettings.smooth_line) {
           context.beginPath();
-          context.clearRect(0, 0, canvasElement.width, canvasElement.height);
-          if (snapshot) context.putImageData(snapshot, 0, 0);
+
+          Canvas.clearCanvas();
+          Canvas.putImageData();
           context.moveTo(coordinates[0].x, coordinates[0].y);
 
           let i;
@@ -137,68 +129,75 @@ export const useInitializeCanvas = () => {
           context.stroke();
         }
 
-        snapshot = null;
-        canvasElement.style.border = 'none';
+        Canvas.storeImageData();
+        points = [];
+        canvas.style.border = 'none';
         drawable = false;
         coordinates = [];
         context.beginPath();
       }
     };
 
-    canvasElement.onmousedown = (e) => {
-      snapshot = context.getImageData(
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      );
+    canvas.onmousedown = (e) => {
       drawable = true;
+
+      Canvas.storeImageData();
       context.moveTo(e.offsetX, e.offsetY);
       coordinates.push({ x: e.offsetX, y: e.offsetY });
-
-      canvasElement.style.border = '1px yellow solid';
+      points.push({ x: e.offsetX, y: e.offsetY });
+      canvas.style.border = '1px yellow solid';
     };
 
-    canvasElement.onmouseup = onDrawingStop;
+    canvas.onmouseup = onDrawingStop;
 
-    canvasElement.onmouseleave = onDrawingStop;
+    canvas.onmouseleave = onDrawingStop;
 
-    canvasElement.onmousemove = (e) => {
+    canvas.onmousemove = (e) => {
       if (drawable) {
-        coordinates.push({ x: e.offsetX, y: e.offsetY });
-        context.lineTo(e.offsetX, e.offsetY);
+        if (!drawSettings.line) {
+          coordinates.push({ x: e.offsetX, y: e.offsetY });
+          context.lineTo(e.offsetX, e.offsetY);
+        } else {
+          context.beginPath();
+          Canvas.clearCanvas();
+
+          Canvas.putImageData();
+          context.moveTo(points[0].x, points[0].y);
+          context.lineTo(e.offsetX, e.offsetY);
+        }
+
         context.stroke();
       }
     };
 
-    canvasElement.ontouchstart = (e) => {
+    canvas.ontouchstart = (e) => {
       e.preventDefault();
 
       const mouseDown = new MouseEvent('mousedown', {
         clientX: e.touches[0].clientX,
         clientY: e.touches[0].clientY,
       });
-      canvasElement.dispatchEvent(mouseDown);
+      canvas.dispatchEvent(mouseDown);
     };
 
-    canvasElement.ontouchend = (e) => {
+    canvas.ontouchend = (e) => {
       const mouseEnd = new MouseEvent('mouseup');
-      canvasElement.dispatchEvent(mouseEnd);
+      canvas.dispatchEvent(mouseEnd);
     };
 
-    canvasElement.ontouchcancel = (e) => {
+    canvas.ontouchcancel = (e) => {
       const mouseEnd = new MouseEvent('mouseup');
-      canvasElement.dispatchEvent(mouseEnd);
+      canvas.dispatchEvent(mouseEnd);
     };
 
-    canvasElement.ontouchmove = (e) => {
+    canvas.ontouchmove = (e) => {
       const mouseDown = new MouseEvent('mousemove', {
         clientX: e.touches[0].clientX,
         clientY: e.touches[0].clientY,
       });
-      canvasElement.dispatchEvent(mouseDown);
+      canvas.dispatchEvent(mouseDown);
     };
-  }, [drawSettings.smooth_line]);
+  }, [drawSettings.smooth_line, drawSettings.line]);
 
   useEffect(() => {
     const getAnalytics = async () => {
@@ -233,40 +232,4 @@ export const useInitializeCanvas = () => {
 
     getAnalytics();
   }, []);
-
-  // useEffect(() => {
-  //   const canvasElement = document.getElementById(
-  //     'canvas'
-  //   ) as HTMLCanvasElement;
-  //   const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-
-  //   window.addEventListener('resize', (e) => {
-  //     const backupCanvas = document.createElement('canvas');
-  //     const backupCanvasContext = backupCanvas.getContext(
-  //       '2d'
-  //     ) as CanvasRenderingContext2D;
-
-  //     backupCanvas.width = canvasElement.width;
-  //     backupCanvas.height = canvasElement.height;
-
-  //     const canvasContainer = document.getElementById('canvas_container');
-
-  //     backupCanvasContext.drawImage(canvasElement, 0, 0);
-  //     if (canvasContainer) {
-  //       const width = canvasContainer.clientWidth;
-  //       const height = canvasContainer.clientHeight;
-
-  //       if (width < height) {
-  //         canvasElement.width = width - 50;
-  //         canvasElement.height = (3 / 4) * width;
-  //       } else {
-  //         canvasElement.height = height - 50;
-  //         canvasElement.width = (3 / 4) * height;
-  //       }
-  //     }
-  //     context.drawImage(backupCanvas, 0, 0);
-  //   });
-  // }, []);
-
-  return null;
 };

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { tw, css } from 'twind/style';
 import { useDrawingContext } from '../Context';
 import CloseIcon from '@mui/icons-material/Close';
+import { Canvas } from '../classes/canvas.class';
 
 const ExportDialog = ({
   setIsExportDialogOpen,
@@ -20,85 +21,40 @@ const ExportDialog = ({
   });
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    const { canvas } = Canvas.getElements();
 
     setDimensions((prev: any) => ({
       ...prev,
-      width: canvasElement.width,
-      height: canvasElement.height,
+      width: canvas.width,
+      height: canvas.height,
     }));
   }, []);
 
   useEffect(() => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
+    Canvas.mockCanvasBgColor(canvasSettings.bg_color, (_canvas) => {
+      const imageURI = _canvas.toDataURL(
+        `image/${dimensions.type}`,
+        dimensions.quality
+      );
 
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
-
-    const imageData = context.getImageData(
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height
-    );
-
-    context.save();
-
-    context.globalCompositeOperation = 'destination-over';
-    context.fillStyle = canvasSettings.bg_color;
-    context.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-    const imageURI = canvasElement.toDataURL(
-      `image/${dimensions.type}`,
-      dimensions.quality
-    );
-
-    context.restore();
-    context.putImageData(imageData, 0, 0);
-
-    setImageUrl(imageURI);
+      setImageUrl(imageURI);
+    });
   }, [dimensions]);
 
   const saveImage = () => {
-    const canvasElement = document.getElementById(
-      'canvas'
-    ) as HTMLCanvasElement;
-    const context = canvasElement.getContext('2d') as CanvasRenderingContext2D;
+    Canvas.mockCanvasBgColor(canvasSettings.bg_color, (_canvas) => {
+      const imageURI = _canvas.toDataURL(
+        `image/${dimensions.type}`,
+        dimensions.quality
+      );
 
-    const imageData = context.getImageData(
-      0,
-      0,
-      canvasElement.width,
-      canvasElement.height
-    );
+      const anchorElement = document.createElement('a');
+      anchorElement.href = imageURI;
+      anchorElement.download = `Drawing-${dimensions.type}.${dimensions.type}`;
 
-    context.save();
-
-    context.globalCompositeOperation = 'destination-over';
-    context.fillStyle = canvasSettings.bg_color;
-    context.fillRect(0, 0, canvasElement.width, canvasElement.height);
-
-    console.log(dimensions.type, dimensions.quality);
-
-    const imageURI = canvasElement.toDataURL(
-      `image/${dimensions.type}`,
-      dimensions.quality
-    );
-
-    context.restore();
-    context.putImageData(imageData, 0, 0);
-
-    const anchorElement = document.createElement('a');
-    anchorElement.href = imageURI;
-    anchorElement.download = `Drawing-${dimensions.type}.${dimensions.type}`;
-
-    anchorElement.click();
-    setIsExportDialogOpen(false);
+      anchorElement.click();
+      setIsExportDialogOpen(false);
+    });
   };
 
   return (

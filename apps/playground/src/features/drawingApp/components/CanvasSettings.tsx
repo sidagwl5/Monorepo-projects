@@ -25,7 +25,7 @@ export const CanvasSettings = () => {
                   onClick={() => {
                     setCanvasSettings((prev: any) => ({
                       ...prev,
-                      bg_color,
+                      bg_color: value,
                     }));
                   }}
                   className={tw(

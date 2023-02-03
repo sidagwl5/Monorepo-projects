@@ -31,6 +31,7 @@ export const DrawingContext = ({ children }: any) => {
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
     round_line_join: true,
+    line: false,
     round_line_cap: true,
     color: 'white',
     width: '3',
