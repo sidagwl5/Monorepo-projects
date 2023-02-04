@@ -9,6 +9,10 @@ const settingsOption = [
     key: 'line',
   },
   {
+    title: 'Delete doodles',
+    key: 'delete',
+  },
+  {
     title: 'Smooth Draw',
     key: 'smooth_line',
   },

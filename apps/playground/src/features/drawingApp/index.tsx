@@ -120,15 +120,16 @@ export const DrawingApp = () => {
       <div
         id="canvas_container"
         className={tw(
-          'h-full flex-1 flex justify-center items-center',
-          css({ background: '#ffffff1a' })
+          'h-full flex-1 flex justify-center overflow-hidden items-center',
+          css({ background: '#ffffff1a', willChange: 'width' })
         )}
       >
         <canvas
           ref={Canvas.initialize}
           className={tw(
+            'relative',
             css({
-              transition: '0.3s all ease-out',
+              transition: '0.3s background ease-out',
               background: 'rgba(255, 255, 255, 0.08)',
             })
           )}
@@ -149,6 +150,10 @@ export const DrawingApp = () => {
               localStorage.setItem(
                 'progress',
                 Canvas.getElements().canvas.toDataURL('image/png', 1)
+              );
+              enqueueSnackbar(
+                { message: 'Progress saved successfully', variant: 'success' },
+                { key: 'progress_saved' }
               );
             }}
             className={tw(

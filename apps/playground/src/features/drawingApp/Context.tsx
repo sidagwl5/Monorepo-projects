@@ -32,6 +32,7 @@ export const DrawingContext = ({ children }: any) => {
     smooth_line: true,
     round_line_join: true,
     line: false,
+    delete: false,
     round_line_cap: true,
     color: 'white',
     width: '3',

@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import jsCookie from 'js-cookie';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   browserName,
   browserVersion,
@@ -13,11 +13,15 @@ import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
 import penPng from '../../../assets/pen.png';
 import eraserPng from '../../../assets/eraser.png';
+import movePng from '../../../assets/move.png';
 import { Canvas } from '../classes/canvas.class';
+import { Doodle } from '../classes/line.class';
 
 export const useInitializeCanvas = () => {
   const { drawSettings, currentTab, eraserSettings, canvasSettings } =
     useDrawingContext();
+
+  const coordinatesRef = useRef<Doodle[]>([]);
 
   useEffect(() => {
     const { canvas, context } = Canvas.getElements();
@@ -27,7 +31,7 @@ export const useInitializeCanvas = () => {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
-      const scale = 3;
+      const scale = 1;
       if (width < height) {
         canvas.style.width = `${width - 50}px`;
         canvas.style.height = `${(5 / 6) * width}px`;
@@ -42,14 +46,12 @@ export const useInitializeCanvas = () => {
         canvas.width = (5 / 6) * height * scale;
       }
 
-      // const progress = localStorage.getItem('progress');
-      // if (progress) {
-      //   Canvas.loadImgURLToCanvas(progress).finally(() => {
-      //     context.scale(scale, scale);
-      //   });
-      // }
-
-      context.scale(scale, scale);
+      const progress = localStorage.getItem('progress');
+      if (progress) {
+        Canvas.loadImgURLToCanvas(progress).finally(() => {
+          context.scale(scale, scale);
+        });
+      }
     }
   }, []);
 
@@ -59,6 +61,9 @@ export const useInitializeCanvas = () => {
     if (currentTab === 'eraser') {
       canvas.style.cursor = `url(${eraserPng}), auto`;
       context.globalCompositeOperation = 'destination-out';
+    } else if (currentTab === 'canvas') {
+      canvas.style.cursor = `url(${movePng}), auto`;
+      context.globalCompositeOperation = 'source-over';
     } else {
       canvas.style.cursor = `url(${penPng}), auto`;
       context.globalCompositeOperation = 'source-over';
@@ -94,58 +99,63 @@ export const useInitializeCanvas = () => {
   useEffect(() => {
     const { context, canvas } = Canvas.getElements();
 
-    let coordinates: any[] = [];
     let drawable = false;
     let points: any[] = [];
+    let move = false;
+    let doodle: Doodle;
+    let doodleSelected: Doodle | undefined;
 
-    const onDrawingStop = () => {
+    const onDrawingStop = (e) => {
       if (drawable) {
-        if (coordinates.length > 1 && drawSettings.smooth_line) {
-          context.beginPath();
-
-          Canvas.clearCanvas();
-          Canvas.putImageData();
-          context.moveTo(coordinates[0].x, coordinates[0].y);
-
-          let i;
-          for (i = 1; i < coordinates.length - 2; i++) {
-            const xc = (coordinates[i].x + coordinates[i + 1].x) / 2;
-            const yc = (coordinates[i].y + coordinates[i + 1].y) / 2;
-            context.quadraticCurveTo(
-              coordinates[i].x,
-              coordinates[i].y,
-              xc,
-              yc
-            );
-          }
-          // curve through the last two coordinates
-          context.quadraticCurveTo(
-            coordinates[i].x,
-            coordinates[i].y,
-            coordinates[i + 1].x,
-            coordinates[i + 1].y
-          );
-
-          context.stroke();
+        if (doodle.getPoints().length > 1 && drawSettings.smooth_line) {
+          doodle.addSmoothness();
         }
 
         Canvas.storeImageData();
         points = [];
         canvas.style.border = 'none';
         drawable = false;
-        coordinates = [];
         context.beginPath();
+      } else if (move) {
+        move = false;
       }
     };
 
     canvas.onmousedown = (e) => {
-      drawable = true;
+      if (currentTab === 'draw' && drawSettings.delete) {
+        doodleSelected = coordinatesRef.current.find((line) =>
+          line.isSelected(e.offsetX, e.offsetY)
+        );
 
-      Canvas.storeImageData();
-      context.moveTo(e.offsetX, e.offsetY);
-      coordinates.push({ x: e.offsetX, y: e.offsetY });
-      points.push({ x: e.offsetX, y: e.offsetY });
-      canvas.style.border = '1px yellow solid';
+        if (doodleSelected) {
+          Canvas.putImageData();
+          context.save();
+          context.strokeStyle = 'yellow';
+          context.lineWidth = 2;
+
+          const { x_max, x_min, y_max, y_min } =
+            doodleSelected.calculateBoxDimensions();
+          context.strokeRect(
+            x_min - 2,
+            y_min - 2,
+            x_max - x_min + 4,
+            y_max - y_min + 4
+          );
+
+          context.restore();
+        }
+      } else if (currentTab === 'draw' || currentTab === 'eraser') {
+        drawable = true;
+        Canvas.storeImageData();
+        context.moveTo(e.offsetX, e.offsetY);
+
+        points.push({ x: e.offsetX, y: e.offsetY });
+        canvas.style.border = '1px yellow solid';
+        doodle = new Doodle();
+        coordinatesRef.current.push(doodle);
+      } else if (currentTab === 'canvas') {
+        move = true;
+      }
     };
 
     canvas.onmouseup = onDrawingStop;
@@ -155,7 +165,7 @@ export const useInitializeCanvas = () => {
     canvas.onmousemove = (e) => {
       if (drawable) {
         if (!drawSettings.line) {
-          coordinates.push({ x: e.offsetX, y: e.offsetY });
+          doodle.addPoints(e.offsetX, e.offsetY);
           context.lineTo(e.offsetX, e.offsetY);
         } else {
           context.beginPath();
@@ -167,6 +177,16 @@ export const useInitializeCanvas = () => {
         }
 
         context.stroke();
+      } else if (move) {
+        canvas.style.left = `${
+          parseInt(canvas.style.left || window.getComputedStyle(canvas).left) +
+          e.movementX
+        }px`;
+
+        canvas.style.top = `${
+          parseInt(canvas.style.top || window.getComputedStyle(canvas).top) +
+          e.movementY
+        }px`;
       }
     };
 
@@ -197,7 +217,29 @@ export const useInitializeCanvas = () => {
       });
       canvas.dispatchEvent(mouseDown);
     };
-  }, [drawSettings.smooth_line, drawSettings.line]);
+
+    window.onkeydown = (e) => {
+      if (e.code === 'Delete') {
+        if (doodleSelected) {
+          Canvas.clearCanvas();
+          coordinatesRef.current = coordinatesRef.current.filter(
+            (v) => v.id !== doodleSelected?.id
+          );
+
+          coordinatesRef.current.forEach((v) => {
+            v.drawAgain();
+          });
+
+          Canvas.storeImageData();
+        }
+      }
+    };
+  }, [
+    drawSettings.smooth_line,
+    drawSettings.line,
+    currentTab,
+    drawSettings.delete,
+  ]);
 
   useEffect(() => {
     const getAnalytics = async () => {
