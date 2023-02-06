@@ -51,7 +51,7 @@ export const useInitializeCanvas = () => {
         Canvas.loadImgURLToCanvas(progress).finally(() => {
           context.scale(scale, scale);
         });
-      }
+      } else context.scale(scale, scale);
     }
   }, []);
 
@@ -127,8 +127,6 @@ export const useInitializeCanvas = () => {
     let doodleSelected: Doodle | undefined;
 
     const onDrawingStop = (e) => {
-      console.log(coordinatesRef.current);
-
       if (drawable) {
         if (doodle.getPoints().length > 1 && drawSettings.smooth_line) {
           doodle.addSmoothness();
@@ -224,20 +222,32 @@ export const useInitializeCanvas = () => {
     };
 
     canvas.ontouchend = (e) => {
+      window.prevPageX = 0;
+      window.prevPageY = 0;
       const mouseEnd = new MouseEvent('mouseup');
       canvas.dispatchEvent(mouseEnd);
     };
 
     canvas.ontouchcancel = (e) => {
       const mouseEnd = new MouseEvent('mouseup');
+
+      window.prevPageX = 0;
+      window.prevPageY = 0;
       canvas.dispatchEvent(mouseEnd);
     };
 
     canvas.ontouchmove = (e) => {
+      const touch = e.touches[0];
+
       const mouseDown = new MouseEvent('mousemove', {
         clientX: e.touches[0].clientX,
         clientY: e.touches[0].clientY,
+        movementX: touch.pageX - (window.prevPageX || touch.pageX),
+        movementY: touch.pageY - (window.prevPageY || touch.pageY),
       });
+
+      window.prevPageX = touch.pageX;
+      window.prevPageY = touch.pageY;
       canvas.dispatchEvent(mouseDown);
     };
 
