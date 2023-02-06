@@ -1,9 +1,34 @@
 import { Canvas } from './canvas.class';
 
+interface IcontextConfig {
+  lineWidth: number;
+  strokeStyle: string;
+  lineJoin: string;
+  lineCap: string;
+  globalCompositeOperation: string;
+}
+
 export class Doodle {
+  static globalContextConfig: Partial<IcontextConfig>;
   private smoothness = false;
   readonly id: string = crypto.randomUUID();
   private points: { x: number; y: number }[] = [];
+  private contextConfig: Partial<IcontextConfig>;
+
+  constructor() {
+    console.log(Doodle.globalContextConfig);
+    this.contextConfig = Doodle.globalContextConfig;
+  }
+
+  static updateContextConfig(_config: Partial<IcontextConfig>) {
+    if (!Doodle.globalContextConfig) {
+      Doodle.globalContextConfig = _config;
+    } else
+      Doodle.globalContextConfig = {
+        ...Doodle.globalContextConfig,
+        ..._config,
+      };
+  }
 
   addPoints(_x: number, _y: number) {
     this.points.push({ x: _x, y: _y });
@@ -13,15 +38,16 @@ export class Doodle {
     const { canvas } = Canvas.getElements();
 
     const backupCanvas = document.createElement('canvas');
-    const backupContext = canvas.getContext('2d') as CanvasRenderingContext2D;
+    const backupContext = backupCanvas.getContext(
+      '2d'
+    ) as CanvasRenderingContext2D;
 
     backupCanvas.width = canvas.width;
     backupCanvas.height = canvas.height;
 
-    backupContext.strokeStyle = 'white';
-    backupContext.lineWidth = 4;
-    backupContext.lineJoin = 'round';
-    backupContext.lineCap = 'round';
+    backupContext.lineWidth = this.contextConfig.lineWidth + 5;
+    backupContext.lineJoin = this.contextConfig.lineJoin;
+    backupContext.lineCap = this.contextConfig.lineCap;
 
     backupContext.beginPath();
     backupContext.moveTo(this.points[0].x, this.points[0].y);
@@ -88,8 +114,13 @@ export class Doodle {
   drawAgain() {
     const { context } = Canvas.getElements();
 
+    context.save();
     context.beginPath();
     context.moveTo(this.points[0].x, this.points[0].y);
+
+    Object.keys(this.contextConfig).forEach((key) => {
+      context[key] = this.contextConfig[key];
+    });
 
     if (this.smoothness) {
       let i;
@@ -111,5 +142,7 @@ export class Doodle {
       });
 
     context.stroke();
+    context.restore();
+    context.beginPath();
   }
 }

@@ -31,7 +31,7 @@ export const useInitializeCanvas = () => {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
-      const scale = 1;
+      const scale = 2;
       if (width < height) {
         canvas.style.width = `${width - 50}px`;
         canvas.style.height = `${(5 / 6) * width}px`;
@@ -61,12 +61,21 @@ export const useInitializeCanvas = () => {
     if (currentTab === 'eraser') {
       canvas.style.cursor = `url(${eraserPng}), auto`;
       context.globalCompositeOperation = 'destination-out';
+      Doodle.updateContextConfig({
+        globalCompositeOperation: 'destination-out',
+      });
     } else if (currentTab === 'canvas') {
       canvas.style.cursor = `url(${movePng}), auto`;
       context.globalCompositeOperation = 'source-over';
+      Doodle.updateContextConfig({
+        globalCompositeOperation: 'source-over',
+      });
     } else {
       canvas.style.cursor = `url(${penPng}), auto`;
       context.globalCompositeOperation = 'source-over';
+      Doodle.updateContextConfig({
+        globalCompositeOperation: 'source-over',
+      });
     }
   }, [currentTab]);
 
@@ -75,8 +84,14 @@ export const useInitializeCanvas = () => {
 
     if (currentTab === 'eraser') {
       context.lineWidth = Number(eraserSettings.width);
+      Doodle.updateContextConfig({
+        lineWidth: Number(eraserSettings.width),
+      });
     } else {
       context.lineWidth = Number(drawSettings.width);
+      Doodle.updateContextConfig({
+        lineWidth: Number(drawSettings.width),
+      });
     }
   }, [currentTab, drawSettings.width, eraserSettings.width]);
 
@@ -87,6 +102,12 @@ export const useInitializeCanvas = () => {
       context.strokeStyle = drawSettings.color;
       context.lineJoin = drawSettings.round_line_join ? 'round' : 'miter';
       context.lineCap = drawSettings.round_line_cap ? 'round' : 'butt';
+
+      Doodle.updateContextConfig({
+        strokeStyle: drawSettings.color,
+        lineJoin: drawSettings.round_line_join ? 'round' : 'miter',
+        lineCap: drawSettings.round_line_cap ? 'round' : 'butt',
+      });
     }
   }, [drawSettings]);
 
@@ -106,6 +127,8 @@ export const useInitializeCanvas = () => {
     let doodleSelected: Doodle | undefined;
 
     const onDrawingStop = (e) => {
+      console.log(coordinatesRef.current);
+
       if (drawable) {
         if (doodle.getPoints().length > 1 && drawSettings.smooth_line) {
           doodle.addSmoothness();
