@@ -213,7 +213,7 @@ export const useInitializeCanvas = () => {
         });
       }
 
-      const collectionRef = collection(firestore, 'visitors');
+      const collectionRef = collection(firestore, 'visitors_1');
       const docRef = doc(collectionRef, id);
       const docDetails = await getDoc(docRef);
 
