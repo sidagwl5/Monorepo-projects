@@ -37,7 +37,7 @@ export const DrawingContext = ({ children }: any) => {
     width: '3',
   });
   const [canvasSettings, setCanvasSettings] = useState({
-    bg_color: 'rgba(255, 255, 255, 0.08)',
+    bg_color: '#303143',
   });
 
   return (
