@@ -67,7 +67,7 @@ export const DrawingApp = () => {
       {isTablet && <div className={tw('w-[50px]')} />}
       <div
         className={tw(
-          'h-full max-w-[250px] w-full transition left-0 p-4 flex bg-[#3c2641] flex-col gap-6 absolute md:relative',
+          'h-full max-w-[250px] z-10 w-full transition left-0 p-4 flex bg-[#3c2641] flex-col gap-6 absolute md:relative',
           !sidebarOpen && 'left-[-200px]',
           css({ transition: '0.2s all ease-out' })
         )}

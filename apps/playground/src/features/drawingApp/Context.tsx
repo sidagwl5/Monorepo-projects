@@ -9,6 +9,8 @@ const context = createContext<{
   eraserSettings: any;
   setCanvasSettings: any;
   canvasSettings: any;
+  currentAspectRatio: any;
+  setCurrentAspectRatio: any;
 }>({
   drawSettings: {},
   setDrawSettings: null,
@@ -18,12 +20,17 @@ const context = createContext<{
   eraserSettings: {},
   setCanvasSettings: null,
   canvasSettings: {},
+  currentAspectRatio: null,
+  setCurrentAspectRatio: null,
 });
 
 context.displayName = 'Drawing context';
 export const useDrawingContext = () => useContext(context);
 
 export const DrawingContext = ({ children }: any) => {
+  const [currentAspectRatio, setCurrentAspectRatio] = useState<number | null>(
+    null
+  );
   const [eraserSettings, setEraserSettings] = useState({
     width: '10',
   });
@@ -52,6 +59,8 @@ export const DrawingContext = ({ children }: any) => {
         eraserSettings,
         setCanvasSettings,
         canvasSettings,
+        currentAspectRatio,
+        setCurrentAspectRatio,
       }}
     >
       {children}

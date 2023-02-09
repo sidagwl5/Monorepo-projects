@@ -18,8 +18,13 @@ import { Canvas } from '../classes/canvas.class';
 import { Doodle } from '../classes/line.class';
 
 export const useInitializeCanvas = () => {
-  const { drawSettings, currentTab, eraserSettings, canvasSettings } =
-    useDrawingContext();
+  const {
+    drawSettings,
+    currentTab,
+    eraserSettings,
+    canvasSettings,
+    currentAspectRatio,
+  } = useDrawingContext();
 
   const coordinatesRef = useRef<Doodle[]>([]);
 
@@ -31,20 +36,25 @@ export const useInitializeCanvas = () => {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
-      const scale = 2;
-      if (width < height) {
-        canvas.style.width = `${width - 50}px`;
-        canvas.style.height = `${(5 / 6) * width}px`;
+      let elementWidth;
+      let elementHeight;
 
-        canvas.width = (width - 50) * scale;
-        canvas.height = (5 / 6) * width * scale;
-      } else {
-        canvas.style.height = `${height - 50}px`;
-        canvas.style.width = `${(5 / 6) * height}px`;
+      const scale = 3;
+      const diff = 25;
 
-        canvas.height = (height - 50) * scale;
-        canvas.width = (5 / 6) * height * scale;
+      elementWidth = width - diff;
+      elementHeight = (1 / currentAspectRatio) * elementWidth;
+
+      if (elementHeight > height) {
+        elementHeight = height - diff;
+        elementWidth = currentAspectRatio * elementHeight;
       }
+
+      canvas.style.width = `${elementWidth}px`;
+      canvas.style.height = `${elementHeight}px`;
+
+      canvas.width = elementWidth * scale;
+      canvas.height = elementHeight * scale;
 
       const progress = localStorage.getItem('progress');
       if (progress) {
