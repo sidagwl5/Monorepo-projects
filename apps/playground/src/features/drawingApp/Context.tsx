@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 const context = createContext<{
   setDrawSettings: any;
@@ -11,6 +11,9 @@ const context = createContext<{
   canvasSettings: any;
   currentAspectRatio: any;
   setCurrentAspectRatio: any;
+  shapesSettings: any;
+  setShapesSettings: any;
+  coordinatesRef: any[];
 }>({
   drawSettings: {},
   setDrawSettings: null,
@@ -22,27 +25,36 @@ const context = createContext<{
   canvasSettings: {},
   currentAspectRatio: null,
   setCurrentAspectRatio: null,
+  shapesSettings: {},
+  setShapesSettings: null,
+  coordinatesRef: [],
 });
 
 context.displayName = 'Drawing context';
 export const useDrawingContext = () => useContext(context);
 
 export const DrawingContext = ({ children }: any) => {
+  const coordinatesRef = useRef<any[]>([]);
   const [currentAspectRatio, setCurrentAspectRatio] = useState<number | null>(
     null
   );
   const [eraserSettings, setEraserSettings] = useState({
-    width: '10',
+    lineWidth: '10',
   });
   const [currentTab, setCurrentTab] = useState('draw');
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
-    round_line_join: true,
+    lineJoin: true,
     line: false,
     delete: false,
-    round_line_cap: true,
-    color: 'white',
-    width: '3',
+    lineCap: true,
+    strokeStyle: 'white',
+    lineWidth: 3,
+  });
+  const [shapesSettings, setShapesSettings] = useState({
+    type: 'rectangle',
+    strokeStyle: 'white',
+    lineWidth: '3',
   });
   const [canvasSettings, setCanvasSettings] = useState({
     bg_color: 'rgba(255, 255, 255, 0.08)',
@@ -61,6 +73,9 @@ export const DrawingContext = ({ children }: any) => {
         canvasSettings,
         currentAspectRatio,
         setCurrentAspectRatio,
+        shapesSettings,
+        coordinatesRef: coordinatesRef.current,
+        setShapesSettings,
       }}
     >
       {children}

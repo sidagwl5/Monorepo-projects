@@ -8,7 +8,7 @@ interface IcontextConfig {
   globalCompositeOperation: string;
 }
 
-export class Line {
+export class Doodle {
   private smoothness = false;
   readonly id: string = crypto.randomUUID();
   private points: { x: number; y: number }[] = [];
@@ -20,18 +20,10 @@ export class Line {
   }
 
   addPoints(_x: number, _y: number) {
-    Canvas.context.beginPath();
-    Canvas.clearCanvas();
+    if (!this.points.length) Canvas.getElements().context.moveTo(_x, _y);
+    else Canvas.getElements().context.lineTo(_x, _y);
 
-    Canvas.putImageData();
-    if (!this.points.length) {
-      Canvas.getElements().context.moveTo(_x, _y);
-      this.points = [{ x: _x, y: _y }];
-    } else {
-      Canvas.getElements().context.moveTo(this.points[0].x, this.points[0].y);
-      Canvas.getElements().context.lineTo(_x, _y);
-      this.points[1] = { x: _x, y: _y };
-    }
+    this.points.push({ x: _x, y: _y });
   }
 
   isSelected(_x: number, _y: number) {
@@ -81,7 +73,30 @@ export class Line {
   }
 
   addSmoothness() {
-    console.log('cool');
+    const { context } = Canvas.getElements();
+
+    context.beginPath();
+
+    Canvas.clearCanvas();
+    Canvas.putImageData();
+    context.moveTo(this.points[0].x, this.points[0].y);
+
+    let i;
+    for (i = 1; i < this.points.length - 2; i++) {
+      const xc = (this.points[i].x + this.points[i + 1].x) / 2;
+      const yc = (this.points[i].y + this.points[i + 1].y) / 2;
+      context.quadraticCurveTo(this.points[i].x, this.points[i].y, xc, yc);
+    }
+    // curve through the last two this.points
+    context.quadraticCurveTo(
+      this.points[i].x,
+      this.points[i].y,
+      this.points[i + 1].x,
+      this.points[i + 1].y
+    );
+
+    this.smoothness = true;
+    context.stroke();
   }
 
   isSmoothnessEnabled() {

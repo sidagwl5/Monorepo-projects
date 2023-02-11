@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import { collection, doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
 import jsCookie from 'js-cookie';
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import {
   browserName,
   browserVersion,
@@ -9,24 +9,12 @@ import {
   osName,
   osVersion,
 } from 'react-device-detect';
+import { Canvas } from '../classes/canvas.class';
 import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
-import penPng from '../../../assets/pen.png';
-import eraserPng from '../../../assets/eraser.png';
-import movePng from '../../../assets/move.png';
-import { Canvas } from '../classes/canvas.class';
-import { Doodle } from '../classes/line.class';
 
-export const useInitializeCanvas = () => {
-  const {
-    drawSettings,
-    currentTab,
-    eraserSettings,
-    canvasSettings,
-    currentAspectRatio,
-  } = useDrawingContext();
-
-  const coordinatesRef = useRef<Doodle[]>([]);
+export const useInitializeCanvas = (setLoading) => {
+  const { currentAspectRatio } = useDrawingContext();
 
   useEffect(() => {
     const { canvas, context } = Canvas.getElements();
@@ -50,11 +38,14 @@ export const useInitializeCanvas = () => {
         elementWidth = currentAspectRatio * elementHeight;
       }
 
+      context.save();
       canvas.style.width = `${elementWidth}px`;
       canvas.style.height = `${elementHeight}px`;
 
       canvas.width = elementWidth * scale;
       canvas.height = elementHeight * scale;
+
+      context.restore();
 
       const progress = localStorage.getItem('progress');
       if (progress) {
@@ -62,227 +53,10 @@ export const useInitializeCanvas = () => {
           context.scale(scale, scale);
         });
       } else context.scale(scale, scale);
+
+      setTimeout(() => setLoading(false), 1000);
     }
   }, []);
-
-  useEffect(() => {
-    const { canvas, context } = Canvas.getElements();
-
-    if (currentTab === 'eraser') {
-      canvas.style.cursor = `url(${eraserPng}), auto`;
-      context.globalCompositeOperation = 'destination-out';
-      Doodle.updateContextConfig({
-        globalCompositeOperation: 'destination-out',
-      });
-    } else if (currentTab === 'canvas') {
-      canvas.style.cursor = `url(${movePng}), auto`;
-      context.globalCompositeOperation = 'source-over';
-      Doodle.updateContextConfig({
-        globalCompositeOperation: 'source-over',
-      });
-    } else {
-      canvas.style.cursor = `url(${penPng}), auto`;
-      context.globalCompositeOperation = 'source-over';
-      Doodle.updateContextConfig({
-        globalCompositeOperation: 'source-over',
-      });
-    }
-  }, [currentTab]);
-
-  useEffect(() => {
-    const { context } = Canvas.getElements();
-
-    if (currentTab === 'eraser') {
-      context.lineWidth = Number(eraserSettings.width);
-      Doodle.updateContextConfig({
-        lineWidth: Number(eraserSettings.width),
-      });
-    } else {
-      context.lineWidth = Number(drawSettings.width);
-      Doodle.updateContextConfig({
-        lineWidth: Number(drawSettings.width),
-      });
-    }
-  }, [currentTab, drawSettings.width, eraserSettings.width]);
-
-  useEffect(() => {
-    const { context } = Canvas.getElements();
-
-    if (context) {
-      context.strokeStyle = drawSettings.color;
-      context.lineJoin = drawSettings.round_line_join ? 'round' : 'miter';
-      context.lineCap = drawSettings.round_line_cap ? 'round' : 'butt';
-
-      Doodle.updateContextConfig({
-        strokeStyle: drawSettings.color,
-        lineJoin: drawSettings.round_line_join ? 'round' : 'miter',
-        lineCap: drawSettings.round_line_cap ? 'round' : 'butt',
-      });
-    }
-  }, [drawSettings]);
-
-  useEffect(() => {
-    const { canvas } = Canvas.getElements();
-
-    canvas.style.backgroundColor = canvasSettings.bg_color;
-  }, [canvasSettings.bg_color]);
-
-  useEffect(() => {
-    const { context, canvas } = Canvas.getElements();
-
-    let drawable = false;
-    let points: any[] = [];
-    let move = false;
-    let doodle: Doodle;
-    let doodleSelected: Doodle | undefined;
-
-    const onDrawingStop = (e) => {
-      if (drawable) {
-        if (doodle.getPoints().length > 1 && drawSettings.smooth_line) {
-          doodle.addSmoothness();
-        }
-
-        Canvas.storeImageData();
-        points = [];
-        canvas.style.border = 'none';
-        drawable = false;
-        context.beginPath();
-      } else if (move) {
-        move = false;
-      }
-    };
-
-    canvas.onmousedown = (e) => {
-      if (currentTab === 'draw' && drawSettings.delete) {
-        doodleSelected = coordinatesRef.current.find((line) =>
-          line.isSelected(e.offsetX, e.offsetY)
-        );
-
-        if (doodleSelected) {
-          Canvas.putImageData();
-          context.save();
-          context.strokeStyle = 'yellow';
-          context.lineWidth = 2;
-
-          const { x_max, x_min, y_max, y_min } =
-            doodleSelected.calculateBoxDimensions();
-          context.strokeRect(
-            x_min - 2,
-            y_min - 2,
-            x_max - x_min + 4,
-            y_max - y_min + 4
-          );
-
-          context.restore();
-        }
-      } else if (currentTab === 'draw' || currentTab === 'eraser') {
-        drawable = true;
-        Canvas.storeImageData();
-        context.moveTo(e.offsetX, e.offsetY);
-
-        points.push({ x: e.offsetX, y: e.offsetY });
-        canvas.style.border = '1px yellow solid';
-        doodle = new Doodle();
-        coordinatesRef.current.push(doodle);
-      } else if (currentTab === 'canvas') {
-        move = true;
-      }
-    };
-
-    canvas.onmouseup = onDrawingStop;
-
-    canvas.onmouseleave = onDrawingStop;
-
-    canvas.onmousemove = (e) => {
-      if (drawable) {
-        if (!drawSettings.line) {
-          doodle.addPoints(e.offsetX, e.offsetY);
-          context.lineTo(e.offsetX, e.offsetY);
-        } else {
-          context.beginPath();
-          Canvas.clearCanvas();
-
-          Canvas.putImageData();
-          context.moveTo(points[0].x, points[0].y);
-          context.lineTo(e.offsetX, e.offsetY);
-        }
-
-        context.stroke();
-      } else if (move) {
-        canvas.style.left = `${
-          parseInt(canvas.style.left || window.getComputedStyle(canvas).left) +
-          e.movementX
-        }px`;
-
-        canvas.style.top = `${
-          parseInt(canvas.style.top || window.getComputedStyle(canvas).top) +
-          e.movementY
-        }px`;
-      }
-    };
-
-    canvas.ontouchstart = (e) => {
-      e.preventDefault();
-
-      const mouseDown = new MouseEvent('mousedown', {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY,
-      });
-      canvas.dispatchEvent(mouseDown);
-    };
-
-    canvas.ontouchend = (e) => {
-      window.prevPageX = 0;
-      window.prevPageY = 0;
-      const mouseEnd = new MouseEvent('mouseup');
-      canvas.dispatchEvent(mouseEnd);
-    };
-
-    canvas.ontouchcancel = (e) => {
-      const mouseEnd = new MouseEvent('mouseup');
-
-      window.prevPageX = 0;
-      window.prevPageY = 0;
-      canvas.dispatchEvent(mouseEnd);
-    };
-
-    canvas.ontouchmove = (e) => {
-      const touch = e.touches[0];
-
-      const mouseDown = new MouseEvent('mousemove', {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY,
-        movementX: touch.pageX - (window.prevPageX || touch.pageX),
-        movementY: touch.pageY - (window.prevPageY || touch.pageY),
-      });
-
-      window.prevPageX = touch.pageX;
-      window.prevPageY = touch.pageY;
-      canvas.dispatchEvent(mouseDown);
-    };
-
-    window.onkeydown = (e) => {
-      if (e.code === 'Delete') {
-        if (doodleSelected) {
-          Canvas.clearCanvas();
-          coordinatesRef.current = coordinatesRef.current.filter(
-            (v) => v.id !== doodleSelected?.id
-          );
-
-          coordinatesRef.current.forEach((v) => {
-            v.drawAgain();
-          });
-
-          Canvas.storeImageData();
-        }
-      }
-    };
-  }, [
-    drawSettings.smooth_line,
-    drawSettings.line,
-    currentTab,
-    drawSettings.delete,
-  ]);
 
   useEffect(() => {
     const getAnalytics = async () => {

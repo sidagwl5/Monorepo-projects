@@ -1,6 +1,15 @@
+interface IcontextConfig {
+  lineWidth: number;
+  strokeStyle: string;
+  lineJoin: string;
+  lineCap: string;
+  globalCompositeOperation: string;
+}
+
 export class Canvas {
   static canvas: HTMLCanvasElement;
   static context: CanvasRenderingContext2D;
+  private static globalContextConfig: IcontextConfig;
   static imageData: ImageData;
 
   static initialize(_canvas: HTMLCanvasElement) {
@@ -8,6 +17,30 @@ export class Canvas {
     Canvas.context = _canvas.getContext('2d', {
       willReadFrequently: true,
     }) as CanvasRenderingContext2D;
+  }
+
+  static updateContextConfig(_config: IcontextConfig) {
+    const {
+      globalCompositeOperation,
+      lineCap,
+      lineJoin,
+      lineWidth,
+      strokeStyle,
+    } = _config;
+
+    console.log({ _config });
+
+    Canvas.context.globalCompositeOperation = globalCompositeOperation;
+    Canvas.context.lineCap = lineCap ? 'round' : 'square';
+    Canvas.context.lineJoin = lineJoin ? 'round' : 'miter';
+    Canvas.context.lineWidth = lineWidth;
+    Canvas.context.strokeStyle = strokeStyle;
+
+    Canvas.globalContextConfig = _config;
+  }
+
+  static getGlobalContextConfig() {
+    return Canvas.globalContextConfig;
   }
 
   static getElements() {
