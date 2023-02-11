@@ -54,6 +54,19 @@ class Line {
     );
   }
 
+  isCursorInside(_x: number, _y: number) {
+    const { x_max, x_min, y_max, y_min } = this.calculateBoxDimensions();
+
+    return x_max > _x && x_min < _x && y_max > _y && y_min < _y;
+  }
+
+  move(_x: number, _y: number) {
+    this.points.forEach((point) => {
+      point.x = point.x + _x;
+      point.y = point.y + _y;
+    });
+  }
+
   getPoints() {
     return this.points;
   }
@@ -83,6 +96,7 @@ export const MoveSelectedDoodles = () => {
 
     let drawable = false;
     let line: Line;
+    let move = false;
     let lineSelected: Line | undefined;
     let imageData: ImageData;
 
@@ -103,11 +117,12 @@ export const MoveSelectedDoodles = () => {
         canvasElement.style.border = '1px yellow solid';
       } else {
         if (imageData) context.putImageData(imageData, 0, 0);
-        lineSelected = coordinatesRef.current.find((line) =>
+        const _lineSelected = coordinatesRef.current.find((line) =>
           line.isSelected(e.offsetX, e.offsetY)
         );
 
-        if (lineSelected) {
+        if (_lineSelected) {
+          lineSelected = _lineSelected;
           imageData = context.getImageData(
             0,
             0,
@@ -130,13 +145,33 @@ export const MoveSelectedDoodles = () => {
 
           context.restore();
         }
+
+        if (lineSelected) {
+          move = lineSelected.isCursorInside(e.offsetX, e.offsetY);
+        }
       }
     };
 
     canvasElement.onmouseup = (e) => {
       context.beginPath();
-      drawable = false;
       canvasElement.style.border = 'none';
+      if (drawable) {
+        drawable = false;
+        imageData = context.getImageData(
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height
+        );
+      } else if (move) {
+        imageData = context.getImageData(
+          0,
+          0,
+          canvasElement.width,
+          canvasElement.height
+        );
+        move = false;
+      }
     };
 
     canvasElement.onmouseleave = (e) => {
@@ -146,9 +181,23 @@ export const MoveSelectedDoodles = () => {
     };
 
     canvasElement.onmousemove = (e) => {
+      console.log(move);
       if (drawable) {
         line.addPoints(e.offsetX, e.offsetY);
         context.lineTo(e.offsetX, e.offsetY);
+        context.stroke();
+      } else if (move) {
+        context.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        lineSelected.move(e.movementX, e.movementY);
+
+        const points = lineSelected.getPoints();
+        context.beginPath();
+        context.moveTo(points[0].x, points[0].y);
+
+        points.forEach((v) => {
+          context.lineTo(v.x, v.y);
+        });
+
         context.stroke();
       }
     };
@@ -215,5 +264,3 @@ export const MoveSelectedDoodles = () => {
     </div>
   );
 };
-
-export default RemoveDrawingDoodle;
