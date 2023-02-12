@@ -36,7 +36,13 @@ export const DrawSettings = () => {
 
   useEffect(() => {
     Canvas.getElements().canvas.style.cursor = `url(${penPng}), auto`;
+
+    return () => Canvas.putImageData();
   }, []);
+
+  useEffect(() => {
+    if (!drawSettings.delete) Canvas.putImageData();
+  }, [drawSettings.delete]);
 
   useEffect(() => {
     Canvas.updateContextConfig({
@@ -90,7 +96,6 @@ export const DrawSettings = () => {
         }
       } else {
         drawable = true;
-        Canvas.storeImageData();
 
         canvas.style.border = '1px yellow solid';
         doodle = drawSettings.line
