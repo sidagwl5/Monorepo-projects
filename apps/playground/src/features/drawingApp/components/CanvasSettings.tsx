@@ -1,9 +1,9 @@
-import { Tooltip } from '@mui/material';
-import { css, tw } from 'twind/style';
-import { useDrawingContext } from '../Context';
 import DoneIcon from '@mui/icons-material/Done';
-import movePng from '../../../assets/move.png';
+import { Tooltip } from '@mui/material';
 import { useEffect } from 'react';
+import { css, tw } from 'twind/style';
+import movePng from '../../../assets/move.png';
+import { useDrawingContext } from '../Context';
 import { Canvas } from '../classes/canvas.class';
 
 export const CanvasSettings = () => {
@@ -102,7 +102,7 @@ export const CanvasSettings = () => {
           { title: 'red', value: 'red' },
           { title: 'pink', value: 'pink' },
           { title: 'yellow', value: 'yellow' },
-          { title: 'hazelnut', value: 'rgba(255, 255, 255, 0.08)' },
+          { title: 'hazelnut', value: '#313142' },
         ].map(({ title, value }) => (
           <Tooltip arrow title={title} disableInteractive placement="top">
             <div className={tw('relative cursor-pointer')}>

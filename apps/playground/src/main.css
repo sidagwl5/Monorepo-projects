@@ -20,3 +20,68 @@ body {
   justify-content: center;
   background-color: #04061c;
 }
+
+/***  color picker ****/
+
+.sketch-picker {
+  width: 190px !important;
+  padding: 0px !important;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sketch-picker .flexbox-fix {
+  padding: 0px 10px !important;
+  margin: 0px !important;
+  border: none !important;
+}
+
+.sketch-picker .flexbox-fix:nth-child(2) {
+  padding-top: 6px !important;
+  gap: 6px;
+  align-items: center;
+}
+
+.sketch-picker .flexbox-fix:nth-child(2) div {
+  margin: 0px !important;
+  gap: 4px;
+  display: flex;
+  justify-content: space-between !important;
+  flex-direction: column;
+}
+
+.sketch-picker .flexbox-fix:nth-child(3) {
+  gap: 6px;
+}
+
+.sketch-picker .flexbox-fix div {
+  padding: 0px !important;
+}
+
+.sketch-picker .flexbox-fix input {
+  width: 100% !important;
+  border-radius: 4px;
+  padding: 4px !important;
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.sketch-picker .flexbox-fix label {
+  color: rgba(0, 0, 0, 0.6) !important;
+  font-weight: 500;
+}
+
+.sketch-picker .flexbox-fix:nth-child(4) {
+  gap: 6px;
+  padding-bottom: 12px !important;
+}
+
+.sketch-picker .flexbox-fix:nth-child(4) div {
+  margin: 0px !important;
+}
+
+.saturation-white div:nth-child(2) {
+  pointer-events: none !important;
+}
