@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 const context = createContext<{
   setDrawSettings: any;
@@ -9,6 +9,11 @@ const context = createContext<{
   eraserSettings: any;
   setCanvasSettings: any;
   canvasSettings: any;
+  currentAspectRatio: any;
+  setCurrentAspectRatio: any;
+  shapesSettings: any;
+  setShapesSettings: any;
+  coordinatesRef: any[];
 }>({
   drawSettings: {},
   setDrawSettings: null,
@@ -18,23 +23,38 @@ const context = createContext<{
   eraserSettings: {},
   setCanvasSettings: null,
   canvasSettings: {},
+  currentAspectRatio: null,
+  setCurrentAspectRatio: null,
+  shapesSettings: {},
+  setShapesSettings: null,
+  coordinatesRef: [],
 });
 
 context.displayName = 'Drawing context';
 export const useDrawingContext = () => useContext(context);
 
 export const DrawingContext = ({ children }: any) => {
+  const coordinatesRef = useRef<any[]>([]);
+  const [currentAspectRatio, setCurrentAspectRatio] = useState<number | null>(
+    null
+  );
   const [eraserSettings, setEraserSettings] = useState({
-    width: '10',
+    lineWidth: '10',
   });
   const [currentTab, setCurrentTab] = useState('draw');
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
-    round_line_join: true,
+    lineJoin: true,
     line: false,
-    round_line_cap: true,
-    color: 'white',
-    width: '3',
+    delete: false,
+    lineCap: true,
+    strokeStyle: 'white',
+    lineWidth: 3,
+  });
+  const [shapesSettings, setShapesSettings] = useState({
+    type: 'rectangle',
+    strokeStyle: 'white',
+    lineWidth: '3',
   });
   const [canvasSettings, setCanvasSettings] = useState({
     bg_color: '#303143',
@@ -51,6 +71,11 @@ export const DrawingContext = ({ children }: any) => {
         eraserSettings,
         setCanvasSettings,
         canvasSettings,
+        currentAspectRatio,
+        setCurrentAspectRatio,
+        shapesSettings,
+        coordinatesRef: coordinatesRef.current,
+        setShapesSettings,
       }}
     >
       {children}

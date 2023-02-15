@@ -1,69 +1,55 @@
 import DoneIcon from '@mui/icons-material/Done';
-import { Switch, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import { css, tw } from 'twind/style';
 import { useDrawingContext } from '../Context';
-import { useEffect } from 'react';
 import { Canvas } from '../classes/canvas.class';
-import { Doodle } from '../classes/doodle.class';
-import { Line } from '../classes/line.class';
-import penPng from '../../../assets/pen.png';
+import { Rectangle } from '../classes/rectangle.class';
+import { useEffect, useState } from 'react';
+import shapesPng from '../../../assets/shapes.png';
+import { Square } from '../classes/square.class';
+import { Circle } from '../classes/circle.class';
 
-const settingsOption = [
+const types = [
   {
-    title: 'Straight Lines',
-    key: 'line',
+    title: 'Rectangle',
+    class: Rectangle,
   },
   {
-    title: 'Delete doodles',
-    key: 'delete',
+    title: 'Square',
+    class: Square,
   },
   {
-    title: 'Smooth Draw',
-    key: 'smooth_line',
-  },
-  {
-    title: 'Line-Join (Round)',
-    key: 'lineJoin',
-  },
-  {
-    title: 'Line-Cap (Round)',
-    key: 'lineCap',
+    title: 'Circle',
+    class: Circle,
   },
 ];
 
-export const DrawSettings = () => {
-  const { drawSettings, setDrawSettings, coordinatesRef } = useDrawingContext();
-
-  useEffect(() => {
-    Canvas.getElements().canvas.style.cursor = `url(${penPng}), auto`;
-
-    return () => Canvas.putImageData();
-  }, []);
-
-  useEffect(() => {
-    if (!drawSettings.delete) Canvas.putImageData();
-  }, [drawSettings.delete]);
+export const ShapesSettings = () => {
+  const [currentShape, setCurrentShape] = useState(types[0]);
+  const { shapesSettings, setShapesSettings, coordinatesRef } =
+    useDrawingContext();
 
   useEffect(() => {
     Canvas.updateContextConfig({
-      ...drawSettings,
+      ...shapesSettings,
       globalCompositeOperation: 'source-over',
+      lineCap: true,
+      lineJoin: true,
     });
-  }, [drawSettings]);
+  }, [shapesSettings]);
+
+  useEffect(() => {
+    Canvas.getElements().canvas.style.cursor = `url(${shapesPng}), auto`;
+  }, []);
 
   useEffect(() => {
     const { context, canvas } = Canvas.getElements();
 
     let drawable = false;
-    let doodle: Doodle | Line;
-    let doodleSelected: Doodle | undefined;
+    let doodle: Rectangle | Square | Circle;
 
     const onDrawingStop = (e) => {
       if (drawable) {
-        if (doodle.getPoints().length > 1 && drawSettings.smooth_line) {
-          doodle.addSmoothness();
-        }
-
         Canvas.storeImageData();
         canvas.style.border = 'none';
         drawable = false;
@@ -72,37 +58,12 @@ export const DrawSettings = () => {
     };
 
     canvas.onmousedown = (e) => {
-      if (drawSettings.delete) {
-        doodleSelected = coordinatesRef.find((line) =>
-          line.isSelected(e.offsetX, e.offsetY)
-        );
+      drawable = true;
+      Canvas.storeImageData();
 
-        if (doodleSelected) {
-          Canvas.putImageData();
-          context.save();
-          context.strokeStyle = 'yellow';
-          context.lineWidth = 2;
-
-          const { x_max, x_min, y_max, y_min } =
-            doodleSelected.calculateBoxDimensions();
-          context.strokeRect(
-            x_min - 2,
-            y_min - 2,
-            x_max - x_min + 4,
-            y_max - y_min + 4
-          );
-
-          context.restore();
-        }
-      } else {
-        drawable = true;
-
-        canvas.style.border = '1px yellow solid';
-        doodle = drawSettings.line
-          ? new Line(e.offsetX, e.offsetY)
-          : new Doodle(e.offsetX, e.offsetY);
-        coordinatesRef.push(doodle);
-      }
+      canvas.style.border = '1px yellow solid';
+      doodle = new currentShape.class(e.offsetX, e.offsetY);
+      coordinatesRef.push(doodle);
     };
 
     canvas.onmouseup = onDrawingStop;
@@ -111,8 +72,7 @@ export const DrawSettings = () => {
 
     canvas.onmousemove = (e) => {
       if (drawable) {
-        doodle.addPoints(e.offsetX, e.offsetY);
-        context.stroke();
+        doodle.addFinalPoints(e.offsetX, e.offsetY);
       }
     };
 
@@ -146,44 +106,20 @@ export const DrawSettings = () => {
 
       canvas.dispatchEvent(mouseDown);
     };
-
-    window.onkeydown = (e) => {
-      if (e.code === 'Delete') {
-        if (doodleSelected) {
-          Canvas.clearCanvas();
-          const getIndex = coordinatesRef.findIndex(
-            (v) => v.id === doodleSelected?.id
-          );
-
-          coordinatesRef.splice(getIndex, 1);
-
-          coordinatesRef.forEach((v) => {
-            v.drawAgain();
-          });
-
-          Canvas.storeImageData();
-        }
-      }
-    };
-  }, [
-    drawSettings.smooth_line,
-    drawSettings.line,
-    drawSettings,
-    coordinatesRef,
-  ]);
+  }, [coordinatesRef, currentShape]);
 
   return (
     <>
       <div className={tw('text-white flex flex-col gap-2')}>
-        <p className={tw('font-medium text-sm capitalize')}>stroke width</p>
+        <p className={tw('font-medium text-sm capitalize')}>shape width</p>
         <input
           className={tw(
             'px-2 py-1 rounded-md',
             css({ background: 'rgba(255, 255, 255, 0.12)' })
           )}
-          value={drawSettings.lineWidth as string}
+          value={shapesSettings.lineWidth as string}
           onChange={(e) =>
-            setDrawSettings((prev) => ({
+            setShapesSettings((prev) => ({
               ...prev,
               lineWidth: e.target.value,
             }))
@@ -203,10 +139,10 @@ export const DrawSettings = () => {
               placement="top"
             >
               <div className={tw('relative cursor-pointer')}>
-                {strokeStyle === drawSettings.strokeStyle && (
+                {strokeStyle === shapesSettings.strokeStyle && (
                   <div
                     onClick={() => {
-                      setDrawSettings((prev: any) => ({
+                      setShapesSettings((prev: any) => ({
                         ...prev,
                         strokeStyle,
                       }));
@@ -221,7 +157,7 @@ export const DrawSettings = () => {
                 )}
                 <div
                   onClick={() => {
-                    setDrawSettings((prev: any) => ({
+                    setShapesSettings((prev: any) => ({
                       ...prev,
                       strokeStyle,
                     }));
@@ -237,10 +173,10 @@ export const DrawSettings = () => {
 
           <Tooltip arrow title={'white'} disableInteractive placement="top">
             <div className={tw('relative cursor-pointer')}>
-              {'white' === drawSettings.strokeStyle && (
+              {'white' === shapesSettings.strokeStyle && (
                 <div
                   onClick={() => {
-                    setDrawSettings((prev: any) => ({
+                    setShapesSettings((prev: any) => ({
                       ...prev,
                       strokeStyle: 'white',
                     }));
@@ -255,7 +191,7 @@ export const DrawSettings = () => {
               )}
               <div
                 onClick={() => {
-                  setDrawSettings((prev: any) => ({
+                  setShapesSettings((prev: any) => ({
                     ...prev,
                     strokeStyle: 'white',
                   }));
@@ -267,27 +203,29 @@ export const DrawSettings = () => {
         </div>
       </div>
 
-      <div className={tw('flex flex-col gap-2')}>
-        {settingsOption.map(({ key, title }) => (
-          <div className={tw('flex justify-between items-center')}>
-            <p className={tw('font-medium text-white text-sm capitalize')}>
-              {title}
-            </p>
-            <Switch
-              onChange={(_, checked) => {
-                setDrawSettings((prev: any) => ({
-                  ...prev,
-                  [key]: checked,
-                }));
-              }}
-              classes={{ track: tw('bg-yellow-400!') }}
-              checked={drawSettings[key]}
-            />
-          </div>
-        ))}
+      <div className={tw('text-white flex flex-col gap-1')}>
+        <p className={tw('font-medium text-sm capitalize')}>Shapes</p>
+        <div className={tw('w-full flex gap-2')}>
+          {types.map((type) => (
+            <Tooltip
+              arrow
+              title={type.title}
+              disableInteractive
+              placement="top"
+            >
+              <div
+                onClick={setCurrentShape.bind(this, type)}
+                className={tw(
+                  'relative cursor-pointer text-[13px] px-2 py-1 border',
+                  currentShape.title === type.title && 'bg-blue-500'
+                )}
+              >
+                {type.title}
+              </div>
+            </Tooltip>
+          ))}
+        </div>
       </div>
     </>
   );
 };
-
-export default DrawSettings;

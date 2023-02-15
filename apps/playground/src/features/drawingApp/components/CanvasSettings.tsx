@@ -2,9 +2,95 @@ import { Tooltip } from '@mui/material';
 import { css, tw } from 'twind/style';
 import { useDrawingContext } from '../Context';
 import DoneIcon from '@mui/icons-material/Done';
+import movePng from '../../../assets/move.png';
+import { useEffect } from 'react';
+import { Canvas } from '../classes/canvas.class';
 
 export const CanvasSettings = () => {
   const { canvasSettings, setCanvasSettings } = useDrawingContext();
+
+  useEffect(() => {
+    Canvas.getElements().canvas.style.cursor = `url(${movePng}), auto`;
+  }, []);
+
+  useEffect(() => {
+    const { canvas } = Canvas.getElements();
+
+    canvas.style.backgroundColor = canvasSettings.bg_color;
+  }, [canvasSettings.bg_color]);
+
+  useEffect(() => {
+    const { canvas } = Canvas.getElements();
+
+    let move = false,
+      prevPageX = 0,
+      prevPageY = 0;
+
+    const onDrawingStop = (e) => {
+      if (move) {
+        move = false;
+        prevPageX = 0;
+        prevPageY = 0;
+      }
+    };
+
+    canvas.onmousedown = (e) => {
+      move = true;
+    };
+
+    canvas.onmouseup = onDrawingStop;
+
+    canvas.onmouseleave = onDrawingStop;
+
+    canvas.onmousemove = (e) => {
+      if (move) {
+        canvas.style.left = `${
+          parseInt(canvas.style.left || window.getComputedStyle(canvas).left) +
+          e.movementX
+        }px`;
+
+        canvas.style.top = `${
+          parseInt(canvas.style.top || window.getComputedStyle(canvas).top) +
+          e.movementY
+        }px`;
+      }
+    };
+
+    canvas.ontouchstart = (e) => {
+      e.preventDefault();
+
+      const mouseDown = new MouseEvent('mousedown', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+      });
+      canvas.dispatchEvent(mouseDown);
+    };
+
+    canvas.ontouchend = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvas.dispatchEvent(mouseEnd);
+    };
+
+    canvas.ontouchcancel = (e) => {
+      const mouseEnd = new MouseEvent('mouseup');
+      canvas.dispatchEvent(mouseEnd);
+    };
+
+    canvas.ontouchmove = (e) => {
+      const touch = e.touches[0];
+
+      const mouseDown = new MouseEvent('mousemove', {
+        clientX: e.touches[0].clientX,
+        clientY: e.touches[0].clientY,
+        movementX: touch.pageX - (prevPageX || touch.pageX),
+        movementY: touch.pageY - (prevPageY || touch.pageY),
+      });
+
+      prevPageX = touch.pageX;
+      prevPageY = touch.pageY;
+      canvas.dispatchEvent(mouseDown);
+    };
+  }, []);
 
   return (
     <div className={tw('text-white flex flex-col gap-2')}>

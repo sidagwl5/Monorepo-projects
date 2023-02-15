@@ -9,15 +9,12 @@ import {
   osName,
   osVersion,
 } from 'react-device-detect';
+import { Canvas } from '../classes/canvas.class';
 import { firestore } from '../configs/firebase.config';
 import { useDrawingContext } from './../Context';
-import penPng from '../../../assets/pen.png';
-import eraserPng from '../../../assets/eraser.png';
-import { Canvas } from '../classes/canvas.class';
 
-export const useInitializeCanvas = () => {
-  const { drawSettings, currentTab, eraserSettings, canvasSettings } =
-    useDrawingContext();
+export const useInitializeCanvas = (setLoading: any) => {
+  const { currentAspectRatio } = useDrawingContext();
 
   useEffect(() => {
     const { canvas, context } = Canvas.getElements();
@@ -27,178 +24,39 @@ export const useInitializeCanvas = () => {
       const width = canvasContainer.clientWidth;
       const height = canvasContainer.clientHeight;
 
+      let elementWidth;
+      let elementHeight;
+
       const scale = 3;
-      if (width < height) {
-        canvas.style.width = `${width - 50}px`;
-        canvas.style.height = `${(5 / 6) * width}px`;
+      const diff = 25;
 
-        canvas.width = (width - 50) * scale;
-        canvas.height = (5 / 6) * width * scale;
-      } else {
-        canvas.style.height = `${height - 50}px`;
-        canvas.style.width = `${(5 / 6) * height}px`;
+      elementWidth = width - diff;
+      elementHeight = (1 / currentAspectRatio) * elementWidth;
 
-        canvas.height = (height - 50) * scale;
-        canvas.width = (5 / 6) * height * scale;
+      if (elementHeight > height) {
+        elementHeight = height - diff;
+        elementWidth = currentAspectRatio * elementHeight;
       }
 
-      // const progress = localStorage.getItem('progress');
-      // if (progress) {
-      //   Canvas.loadImgURLToCanvas(progress).finally(() => {
-      //     context.scale(scale, scale);
-      //   });
-      // }
+      context.save();
+      canvas.style.width = `${elementWidth}px`;
+      canvas.style.height = `${elementHeight}px`;
 
-      context.scale(scale, scale);
-      Canvas.storeImageData();
+      canvas.width = elementWidth * scale;
+      canvas.height = elementHeight * scale;
+
+      context.restore();
+
+      const progress = localStorage.getItem('progress');
+      if (progress) {
+        Canvas.loadImgURLToCanvas(progress).finally(() => {
+          context.scale(scale, scale);
+        });
+      } else context.scale(scale, scale);
+
+      setTimeout(() => setLoading(false), 1000);
     }
   }, []);
-
-  useEffect(() => {
-    const { canvas, context } = Canvas.getElements();
-
-    if (currentTab === 'eraser') {
-      canvas.style.cursor = `url(${eraserPng}), auto`;
-      context.globalCompositeOperation = 'destination-out';
-    } else {
-      canvas.style.cursor = `url(${penPng}), auto`;
-      context.globalCompositeOperation = 'source-over';
-    }
-  }, [currentTab]);
-
-  useEffect(() => {
-    const { context } = Canvas.getElements();
-
-    if (currentTab === 'eraser') {
-      context.lineWidth = Number(eraserSettings.width);
-    } else {
-      context.lineWidth = Number(drawSettings.width);
-    }
-  }, [currentTab, drawSettings.width, eraserSettings.width]);
-
-  useEffect(() => {
-    const { context } = Canvas.getElements();
-
-    if (context) {
-      context.strokeStyle = drawSettings.color;
-      context.lineJoin = drawSettings.round_line_join ? 'round' : 'miter';
-      context.lineCap = drawSettings.round_line_cap ? 'round' : 'butt';
-    }
-  }, [drawSettings]);
-
-  useEffect(() => {
-    const { canvas } = Canvas.getElements();
-
-    canvas.style.backgroundColor = canvasSettings.bg_color;
-  }, [canvasSettings.bg_color]);
-
-  useEffect(() => {
-    const { context, canvas } = Canvas.getElements();
-
-    let coordinates: any[] = [];
-    let drawable = false;
-    let points: any[] = [];
-
-    const onDrawingStop = () => {
-      if (drawable) {
-        if (coordinates.length > 1 && drawSettings.smooth_line) {
-          context.beginPath();
-
-          Canvas.clearCanvas();
-          Canvas.putImageData();
-          context.moveTo(coordinates[0].x, coordinates[0].y);
-
-          let i;
-          for (i = 1; i < coordinates.length - 2; i++) {
-            const xc = (coordinates[i].x + coordinates[i + 1].x) / 2;
-            const yc = (coordinates[i].y + coordinates[i + 1].y) / 2;
-            context.quadraticCurveTo(
-              coordinates[i].x,
-              coordinates[i].y,
-              xc,
-              yc
-            );
-          }
-          // curve through the last two coordinates
-          context.quadraticCurveTo(
-            coordinates[i].x,
-            coordinates[i].y,
-            coordinates[i + 1].x,
-            coordinates[i + 1].y
-          );
-
-          context.stroke();
-        }
-
-        Canvas.storeImageData();
-        points = [];
-        canvas.style.border = 'none';
-        drawable = false;
-        coordinates = [];
-        context.beginPath();
-      }
-    };
-
-    canvas.onmousedown = (e) => {
-      drawable = true;
-
-      Canvas.storeImageData();
-      context.moveTo(e.offsetX, e.offsetY);
-      coordinates.push({ x: e.offsetX, y: e.offsetY });
-      points.push({ x: e.offsetX, y: e.offsetY });
-      canvas.style.border = '1px yellow solid';
-    };
-
-    canvas.onmouseup = onDrawingStop;
-
-    canvas.onmouseleave = onDrawingStop;
-
-    canvas.onmousemove = (e) => {
-      if (drawable) {
-        if (!drawSettings.line || currentTab === 'eraser') {
-          coordinates.push({ x: e.offsetX, y: e.offsetY });
-          context.lineTo(e.offsetX, e.offsetY);
-        } else {
-          context.beginPath();
-          Canvas.clearCanvas();
-
-          Canvas.putImageData();
-          context.moveTo(points[0].x, points[0].y);
-          context.lineTo(e.offsetX, e.offsetY);
-        }
-
-        context.stroke();
-      }
-    };
-
-    canvas.ontouchstart = (e) => {
-      e.preventDefault();
-
-      const mouseDown = new MouseEvent('mousedown', {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY,
-      });
-      canvas.dispatchEvent(mouseDown);
-    };
-
-    canvas.ontouchend = (e) => {
-      const mouseEnd = new MouseEvent('mouseup');
-      canvas.dispatchEvent(mouseEnd);
-    };
-
-    canvas.ontouchcancel = (e) => {
-      const mouseEnd = new MouseEvent('mouseup');
-      canvas.dispatchEvent(mouseEnd);
-    };
-
-    canvas.ontouchmove = (e) => {
-      const mouseDown = new MouseEvent('mousemove', {
-        clientX: e.touches[0].clientX,
-        clientY: e.touches[0].clientY,
-      });
-      canvas.dispatchEvent(mouseDown);
-    };
-  }, [drawSettings.smooth_line, drawSettings.line, currentTab]);
 
   useEffect(() => {
     const getAnalytics = async () => {
