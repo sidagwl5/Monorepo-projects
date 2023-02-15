@@ -71,7 +71,7 @@ export const useInitializeCanvas = (setLoading: any) => {
         });
       }
 
-      const collectionRef = collection(firestore, 'visitors_1');
+      const collectionRef = collection(firestore, 'visitors_2');
       const docRef = doc(collectionRef, id);
       const docDetails = await getDoc(docRef);
 
