@@ -73,9 +73,13 @@ export const DrawSettings = () => {
 
     canvas.onmousedown = (e) => {
       if (drawSettings.delete) {
+        console.log(coordinatesRef);
+
         doodleSelected = coordinatesRef.find((line) =>
           line.isSelected(e.offsetX, e.offsetY)
         );
+
+        console.log(doodleSelected);
 
         if (doodleSelected) {
           Canvas.putImageData();

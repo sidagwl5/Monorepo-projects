@@ -85,7 +85,7 @@ export function App() {
           </div>
         </div>
       ) : (
-        <ColorPickerForCanvasBg />
+        <DrawingApp />
       )}
     </SnackbarProvider>
   );
