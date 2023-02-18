@@ -46,18 +46,20 @@ export const DrawingContext = ({ children }: any) => {
     smooth_line: true,
     lineJoin: true,
     line: false,
-    delete: false,
     lineCap: true,
     strokeStyle: 'white',
+    customColor: '#B3FFA1',
     lineWidth: 3,
   });
   const [shapesSettings, setShapesSettings] = useState({
     type: 'rectangle',
     strokeStyle: 'white',
+    customColor: '#B3FFA1',
     lineWidth: '3',
   });
   const [canvasSettings, setCanvasSettings] = useState({
-    bg_color: 'rgba(255, 255, 255, 0.08)',
+    bg_color: '#303143',
+    customColor: '#303143',
   });
 
   return (

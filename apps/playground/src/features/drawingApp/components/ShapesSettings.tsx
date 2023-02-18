@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import shapesPng from '../../../assets/shapes.png';
 import { Square } from '../classes/square.class';
 import { Circle } from '../classes/circle.class';
+import { ColorPalette } from './ColorPallete';
 
 const types = [
   {
@@ -130,77 +131,17 @@ export const ShapesSettings = () => {
 
       <div className={tw('text-white flex flex-col gap-1')}>
         <p className={tw('font-medium text-sm capitalize')}>Colors</p>
-        <div className={tw('w-full flex gap-2')}>
-          {['green', 'blue', 'red', 'pink', 'yellow'].map((strokeStyle) => (
-            <Tooltip
-              arrow
-              title={strokeStyle}
-              disableInteractive
-              placement="top"
-            >
-              <div className={tw('relative cursor-pointer')}>
-                {strokeStyle === shapesSettings.strokeStyle && (
-                  <div
-                    onClick={() => {
-                      setShapesSettings((prev: any) => ({
-                        ...prev,
-                        strokeStyle,
-                      }));
-                    }}
-                    className={tw(
-                      'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                      css({ background: 'rgba(0, 0, 0, 0.2)' })
-                    )}
-                  >
-                    <DoneIcon className={tw('text-white text-[16px]!')} />
-                  </div>
-                )}
-                <div
-                  onClick={() => {
-                    setShapesSettings((prev: any) => ({
-                      ...prev,
-                      strokeStyle,
-                    }));
-                  }}
-                  className={tw(
-                    'w-6 h-6 rounded-full',
-                    `bg-${strokeStyle}-400`
-                  )}
-                />
-              </div>
-            </Tooltip>
-          ))}
-
-          <Tooltip arrow title={'white'} disableInteractive placement="top">
-            <div className={tw('relative cursor-pointer')}>
-              {'white' === shapesSettings.strokeStyle && (
-                <div
-                  onClick={() => {
-                    setShapesSettings((prev: any) => ({
-                      ...prev,
-                      strokeStyle: 'white',
-                    }));
-                  }}
-                  className={tw(
-                    'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                    css({ background: 'rgba(0, 0, 0, 0.2)' })
-                  )}
-                >
-                  <DoneIcon className={tw('text-white text-[16px]!')} />
-                </div>
-              )}
-              <div
-                onClick={() => {
-                  setShapesSettings((prev: any) => ({
-                    ...prev,
-                    strokeStyle: 'white',
-                  }));
-                }}
-                className={tw('w-6 h-6 rounded-full', `bg-white`)}
-              />
-            </div>
-          </Tooltip>
-        </div>
+        <ColorPalette
+          customColor={shapesSettings.customColor}
+          currentColor={shapesSettings.strokeStyle}
+          updateColor={(strokeStyle: string, customColor: string) => {
+            setShapesSettings((prev: any) => ({
+              ...prev,
+              strokeStyle,
+              customColor,
+            }));
+          }}
+        />
       </div>
 
       <div className={tw('text-white flex flex-col gap-1')}>
