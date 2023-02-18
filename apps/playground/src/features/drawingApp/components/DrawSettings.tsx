@@ -49,7 +49,6 @@ export const DrawSettings = () => {
 
     let drawable = false;
     let doodle: Doodle | Line;
-    let doodleSelected: Doodle | undefined;
 
     const onDrawingStop = (e) => {
       if (drawable) {

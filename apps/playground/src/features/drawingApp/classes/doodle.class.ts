@@ -68,6 +68,59 @@ export class Doodle {
     );
   }
 
+  isCursorInside(_x: number, _y: number) {
+    const { x_max, x_min, y_max, y_min } = this.calculateBoxDimensions();
+
+    return x_max > _x && x_min < _x && y_max > _y && y_min < _y;
+  }
+
+  drawSelectionBox() {
+    const { context } = Canvas.getElements();
+
+    context.save();
+    context.strokeStyle = 'yellow';
+    context.lineWidth = 2;
+    context.globalCompositeOperation = 'source-over';
+
+    const { x_max, x_min, y_max, y_min } = this.calculateBoxDimensions();
+    context.strokeRect(
+      x_min - 2,
+      y_min - 2,
+      x_max - x_min + 4,
+      y_max - y_min + 4
+    );
+
+    context.restore();
+  }
+
+  eraseSelectionBox() {
+    const { context } = Canvas.getElements();
+
+    context.save();
+    context.strokeStyle = 'yellow';
+    context.lineWidth = 2;
+    context.globalCompositeOperation = 'destination-out';
+
+    const { x_max, x_min, y_max, y_min } = this.calculateBoxDimensions();
+    context.strokeRect(
+      x_min - 2,
+      y_min - 2,
+      x_max - x_min + 4,
+      y_max - y_min + 4
+    );
+
+    context.restore();
+  }
+
+  move(_x: number, _y: number) {
+    this.points.forEach((point) => {
+      point.x = point.x + _x;
+      point.y = point.y + _y;
+    });
+
+    this.drawAgain();
+  }
+
   getPoints() {
     return this.points;
   }

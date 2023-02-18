@@ -25,6 +25,7 @@ export const CanvasSettings = () => {
 
     let doodleSelected: Doodle | undefined;
     let move = false,
+      moveDoodle = false,
       prevPageX = 0,
       prevPageY = 0;
 
@@ -34,31 +35,49 @@ export const CanvasSettings = () => {
         prevPageX = 0;
         prevPageY = 0;
       }
+
+      Canvas.storeImageData();
+      moveDoodle = false;
     };
 
     canvas.onmousedown = (e) => {
-      doodleSelected = coordinatesRef.find((line) =>
+      const _doodleSelected = coordinatesRef.find((line) =>
         line.isSelected(e.offsetX, e.offsetY)
       );
 
-      if (doodleSelected) {
-        Canvas.putImageData();
-        context.save();
-        context.strokeStyle = 'yellow';
-        context.lineWidth = 2;
+      if (_doodleSelected && doodleSelected?.id !== _doodleSelected.id) {
+        doodleSelected?.eraseSelectionBox();
+        doodleSelected = _doodleSelected;
+      }
 
-        const { x_max, x_min, y_max, y_min } =
-          doodleSelected.calculateBoxDimensions();
-        context.strokeRect(
-          x_min - 2,
-          y_min - 2,
-          x_max - x_min + 4,
-          y_max - y_min + 4
+      if (doodleSelected) {
+        const isCursorInside = doodleSelected.isCursorInside(
+          e.offsetX,
+          e.offsetY
         );
 
-        context.restore();
+        if (!isCursorInside) {
+          doodleSelected?.eraseSelectionBox();
+          doodleSelected = undefined;
+          move = true;
+        } else {
+          context.save();
+          context.strokeStyle = 'yellow';
+          context.lineWidth = 2;
+
+          const { x_max, x_min, y_max, y_min } =
+            doodleSelected.calculateBoxDimensions();
+          context.strokeRect(
+            x_min - 2,
+            y_min - 2,
+            x_max - x_min + 4,
+            y_max - y_min + 4
+          );
+
+          context.restore();
+          moveDoodle = true;
+        }
       } else {
-        Canvas.putImageData();
         move = true;
       }
     };
@@ -78,15 +97,26 @@ export const CanvasSettings = () => {
           parseInt(canvas.style.top || window.getComputedStyle(canvas).top) +
           e.movementY
         }px`;
-      } else {
-        const doodleSelected = coordinatesRef.find((line) =>
-          line.isSelected(e.offsetX, e.offsetY)
-        );
-
-        if (doodleSelected)
-          Canvas.getElements().canvas.style.cursor = `pointer`;
-        else Canvas.getElements().canvas.style.cursor = `url(${movePng}), auto`;
+      } else if (doodleSelected && moveDoodle) {
+        Canvas.clearCanvas();
+        coordinatesRef.forEach((v) => {
+          if (v.id === doodleSelected.id) {
+            doodleSelected.move(e.movementX, e.movementY);
+            doodleSelected?.drawSelectionBox();
+          } else {
+            v.drawAgain();
+          }
+        });
       }
+      // else {
+      //   const doodleSelected = coordinatesRef.find((line) =>
+      //     line.isSelected(e.offsetX, e.offsetY)
+      //   );
+
+      //   if (doodleSelected)
+      //     Canvas.getElements().canvas.style.cursor = `pointer`;
+      //   else Canvas.getElements().canvas.style.cursor = `url(${movePng}), auto`;
+      // }
     };
 
     canvas.ontouchstart = (e) => {
