@@ -4,6 +4,7 @@ import { forwardRef } from 'react';
 import { tw } from 'twind';
 import { DrawingApp } from '../features/drawingApp';
 import { useDrawingContext } from '../features/drawingApp/Context';
+import { ColorPickerForCanvasBg } from '../experiments/ColorPickerForCanvasBg';
 
 const layouts = [
   { title: '4:3', value: 4 / 3 },

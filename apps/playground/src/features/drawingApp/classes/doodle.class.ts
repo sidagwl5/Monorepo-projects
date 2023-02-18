@@ -37,7 +37,7 @@ export class Doodle {
     backupCanvas.width = canvas.width;
     backupCanvas.height = canvas.height;
 
-    backupContext.lineWidth = this.contextConfig.lineWidth + 10;
+    backupContext.lineWidth = Number(this.contextConfig.lineWidth) + 10;
     backupContext.lineJoin = this.contextConfig.lineJoin;
     backupContext.lineCap = this.contextConfig.lineCap;
 
