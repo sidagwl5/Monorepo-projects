@@ -13,10 +13,10 @@ const settingsOption = [
     title: 'Straight Lines',
     key: 'line',
   },
-  {
-    title: 'Delete doodles',
-    key: 'delete',
-  },
+  // {
+  //   title: 'Delete doodles',
+  //   key: 'delete',
+  // },
   {
     title: 'Smooth Draw',
     key: 'smooth_line',
@@ -78,8 +78,6 @@ export const DrawSettings = () => {
         doodleSelected = coordinatesRef.find((line) =>
           line.isSelected(e.offsetX, e.offsetY)
         );
-
-        console.log(doodleSelected);
 
         if (doodleSelected) {
           Canvas.putImageData();

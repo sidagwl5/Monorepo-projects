@@ -60,6 +60,7 @@ export const DrawingApp = () => {
 
   const reset = () => {
     Canvas.clearCanvas();
+    Canvas.storeImageData();
     enqueueSnackbar(
       { message: 'Canvas reset successfull', variant: 'success' },
       { key: 'reset' }
