@@ -1,14 +1,18 @@
 import Image from 'next/image';
 import { css, tw } from 'twind/style';
-import { Button, tickcircleSvg } from 'ui-lib';
+import { tickcircleSvg } from 'ui-lib';
 import { layouts } from '../staticData';
+import { useDrawingContext } from '../Context';
 
-const LayoutOptions = ({ handleAspectRatio }) => {
-  const [currentAspectRatio, setCurrentAspectRatio] = handleAspectRatio;
+const LayoutOptions = ({ children }) => {
+  const {
+    handleCurrentAspectRatio: [currentAspectRatio, setCurrentAspectRatio],
+  } = useDrawingContext();
+
   return (
     <div
       className={tw(
-        'flex h-full max-w-[800px] px-4 w-full flex-col gap-12 sm:gap-16 items-center sm:items-start justify-center text-white'
+        'flex h-full max-w-[800px] font-nunitoSans px-4 w-full flex-col gap-12 sm:gap-16 items-center sm:items-start justify-center text-white'
       )}
     >
       <h1
@@ -49,7 +53,7 @@ const LayoutOptions = ({ handleAspectRatio }) => {
         ))}
       </div>
 
-      <Button className="self-center">Proceed</Button>
+      {children}
     </div>
   );
 };
