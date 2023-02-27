@@ -34,19 +34,17 @@ const ToolOptions = () => {
   const [currentOption, setCurrentOption] = useState('draw');
 
   return (
-    <div className={tw('h-full flex items-center')}>
-      <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-        {toolOptions.map(({ icon, key, ...rest }) => (
-          <IconButton
-            key={key}
-            active={currentOption === key}
-            onClick={setCurrentOption.bind(this, key)}
-            {...rest}
-          >
-            <Image src={icon} alt={rest.title} />
-          </IconButton>
-        ))}
-      </div>
+    <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
+      {toolOptions.map(({ icon, key, ...rest }) => (
+        <IconButton
+          key={key}
+          active={currentOption === key}
+          onClick={setCurrentOption.bind(this, key)}
+          {...rest}
+        >
+          <Image src={icon} alt={rest.title} />
+        </IconButton>
+      ))}
     </div>
   );
 };
