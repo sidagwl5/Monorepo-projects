@@ -11,7 +11,9 @@ import {
 } from 'ui-lib';
 
 const notificationStyles = style({
-  base: 'max-w-[390px] w-full h-14 font-nunitoSans text-[15px] text-white p-2.5 rounded-lg flex gap-3 items-center',
+  base: tw(
+    'max-w-[390px] w-full h-14 font-nunitoSans text-[15px] text-white p-2.5 rounded-lg flex gap-3 items-center'
+  ),
   variants: {
     variant: {
       success: css({

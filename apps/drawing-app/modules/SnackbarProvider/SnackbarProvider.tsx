@@ -6,7 +6,7 @@ const SnackbarProvider = ({ children }) => {
   return (
     <NotistackSnackbarProvider
       maxSnack={3}
-      autoHideDuration={300000}
+      autoHideDuration={3000}
       preventDuplicate
       classes={{
         root: tw('min-w-max!'),
