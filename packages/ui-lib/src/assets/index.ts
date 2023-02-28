@@ -9,3 +9,6 @@ export { default as tickSquareSvg } from './svgs/ticksquare.svg';
 export { default as warningSvg } from './svgs/warning.svg';
 export { default as errorCircleSvg } from './svgs/errorcircle.svg';
 export { default as crossSvg } from './svgs/cross.svg';
+export { default as resetSvg } from './svgs/reset.svg';
+export { default as arrowRotateLeftSvg } from './svgs/reset.svg';
+export { default as pointerCircleSvg } from './svgs/pointerCircle.svg';

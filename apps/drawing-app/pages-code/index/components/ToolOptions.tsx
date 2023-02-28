@@ -1,9 +1,25 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { tw } from 'twind';
-import { IconButton, addPenSvg, eraserSvg, shapesSvg } from 'ui-lib';
+import {
+  IconButton,
+  addPenSvg,
+  eraserSvg,
+  pointerCircleSvg,
+  shapesSvg,
+} from 'ui-lib';
+import { MoveSettings } from './MoveSettings';
 
 const toolOptions = [
+  {
+    title: 'Select',
+    tooltipProps: {
+      title: `Select (S)`,
+    },
+    icon: pointerCircleSvg,
+    key: 'select',
+    component: <MoveSettings />,
+  },
   {
     title: 'Eraser',
     tooltipProps: {
@@ -31,19 +47,22 @@ const toolOptions = [
 ];
 
 const ToolOptions = () => {
-  const [currentOption, setCurrentOption] = useState('draw');
+  const [currentOption, setCurrentOption] = useState('select');
 
   return (
     <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-      {toolOptions.map(({ icon, key, ...rest }) => (
-        <IconButton
-          key={key}
-          active={currentOption === key}
-          onClick={setCurrentOption.bind(this, key)}
-          {...rest}
-        >
-          <Image src={icon} alt={rest.title} />
-        </IconButton>
+      {toolOptions.map(({ icon, key, component, ...rest }) => (
+        <>
+          <IconButton
+            key={key}
+            active={currentOption === key}
+            onClick={setCurrentOption.bind(this, key)}
+            {...rest}
+          >
+            <Image src={icon} alt={rest.title} />
+          </IconButton>
+          {currentOption === key && component}
+        </>
       ))}
     </div>
   );

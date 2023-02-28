@@ -12,7 +12,7 @@ import {
 
 const notificationStyles = style({
   base: tw(
-    'max-w-[390px] w-full h-14 font-nunitoSans text-[15px] text-white p-2.5 rounded-lg flex gap-3 items-center'
+    'max-w-[390px] w-full h-12 font-nunitoSans text-[14.7px] text-white p-2 rounded-lg flex gap-3 items-center'
   ),
   variants: {
     variant: {
@@ -60,7 +60,7 @@ const Notification = forwardRef(({ variant, id, message }, ref) => {
     <div ref={ref} className={tw(notificationStyles({ variant }))}>
       <div
         className={tw(
-          'h-full rounded-lg flex justify-center p-[7px] items-center',
+          'h-full rounded-lg flex justify-center p-[5px] items-center',
           css({
             aspectRatio: '1/1',
             background: 'rgba(255, 255, 255, 0.24)',

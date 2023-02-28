@@ -2,12 +2,11 @@ import { Canvas } from 'apps/drawing-app/classes/canvas.class';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 import { tw } from 'twind';
-import { IconButton, downloadSvg, saveSvg } from 'ui-lib';
+import { IconButton, downloadSvg, resetSvg, saveSvg } from 'ui-lib';
 import { useSnackbar } from 'notistack';
 
 const UtilityOptions = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [currentOption, setCurrentOption] = useState('draw');
   const utilityOptions = useRef<any[]>([
     {
       title: 'Download',
@@ -16,6 +15,24 @@ const UtilityOptions = () => {
       },
       icon: downloadSvg,
       key: 'download',
+    },
+    {
+      title: 'Reset Canvas',
+      tooltipProps: {
+        title: `Reset Canvas (R)`,
+      },
+      icon: resetSvg,
+      key: 'reset',
+      className: 'bg-dangerBg!',
+      onClick: () => {
+        Canvas.clearCanvas();
+        Canvas.storeImageData();
+
+        enqueueSnackbar({
+          variant: 'success',
+          message: 'Canvas reset successful',
+        });
+      },
     },
     {
       title: 'Save',
@@ -32,7 +49,7 @@ const UtilityOptions = () => {
 
         enqueueSnackbar({
           variant: 'success',
-          message: 'Canvas reset successful',
+          message: 'Canvas progress saved',
         });
       },
     },
@@ -41,7 +58,7 @@ const UtilityOptions = () => {
   return (
     <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
       {utilityOptions.current.map(({ icon, key, ...rest }) => (
-        <IconButton key={key} active={currentOption === key} {...rest}>
+        <IconButton key={key} {...rest}>
           <Image src={icon} alt={rest.title} />
         </IconButton>
       ))}

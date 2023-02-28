@@ -11,7 +11,7 @@ export const Button = ({
     <Tooltip {...tooltipProps}>
       <button
         className={tw(
-          `bg-SecondaryBg px-5 text-black font-medium py-2.5 rounded-lg flex justify-center items-center font-nunitoSans`,
+          `bg-SecondaryBg px-5 text-black font-medium outline-none focus:outline-none py-2.5 rounded-lg flex justify-center items-center font-nunitoSans`,
           className
         )}
         {...rest}

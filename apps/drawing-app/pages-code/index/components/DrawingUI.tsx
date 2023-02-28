@@ -5,8 +5,12 @@ import CanvasLayout from './CanvasLayout';
 
 const DrawingUI = () => {
   return (
-    <div className={tw('w-full h-screen p-2 flex gap-2')}>
-      <div className={tw('h-full flex flex-col justify-between items-center')}>
+    <div className={tw('w-full h-screen p-2 overflow-hidden flex gap-2')}>
+      <div
+        className={tw(
+          'h-full flex flex-col z-10 relative justify-between items-center'
+        )}
+      >
         <div />
         <ToolOptions />
         <UtilityOptions />
