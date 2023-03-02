@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 import { layouts } from './staticData';
 
 const drawingContext = createContext({});
@@ -6,6 +6,17 @@ const drawingContext = createContext({});
 export const useDrawingContext = () => useContext(drawingContext);
 
 export const DrawingContextProvider = ({ children }) => {
+  const coordinatesRef = useRef<any[]>([]);
+  const [drawSettings, setDrawSettings] = useState({
+    smooth_line: true,
+    lineJoin: true,
+    line: false,
+    lineCap: true,
+    strokeStyle: 'white',
+    customColor: '#B3FFA1',
+    lineWidth: 3,
+  });
+
   const [currentAspectRatio, setCurrentAspectRatio] = useState(
     layouts[0].value
   );
@@ -14,6 +25,8 @@ export const DrawingContextProvider = ({ children }) => {
     <drawingContext.Provider
       value={{
         handleCurrentAspectRatio: [currentAspectRatio, setCurrentAspectRatio],
+        handleDrawSettings: [drawSettings, setDrawSettings],
+        coordinatesRef: coordinatesRef.current,
       }}
     >
       {children}
