@@ -2,15 +2,23 @@ import { Canvas } from 'apps/drawing-app/classes/canvas.class';
 import { Doodle } from 'apps/drawing-app/classes/doodle.class';
 import { Line } from 'apps/drawing-app/classes/line.class';
 import { useEffect } from 'react';
-import { tw, css, apply } from 'twind/style';
-import { useDrawingContext } from '../Context';
 import { SketchPicker } from 'react-color';
+import { css, tw } from 'twind/style';
+import { Slider } from 'ui-lib';
+import { useDrawingContext } from '../Context';
 
 export const DrawSettings = () => {
   const {
-    handleDrawSettings: [drawSettings],
+    handleDrawSettings: [drawSettings, setDrawSettings],
     coordinatesRef,
   } = useDrawingContext();
+
+  useEffect(() => {
+    Canvas.updateContextConfig({
+      ...drawSettings,
+      globalCompositeOperation: 'source-over',
+    });
+  }, [drawSettings]);
 
   useEffect(() => {
     const { context, canvas } = Canvas.getElements();
@@ -87,15 +95,39 @@ export const DrawSettings = () => {
   ]);
 
   return (
-    <div className={tw('w-full flex-col gap-4')}>
+    <div className={tw('w-full flex-col flex gap-4')}>
       <div className={tw('flex flex-col gap-1')}>
         <h3 className={tw('text-[#ECDEDE]')}>Thickness</h3>
+        <Slider
+          onChange={(_, value) =>
+            setDrawSettings((prev) => ({ ...prev, lineWidth: value }))
+          }
+          value={drawSettings.lineWidth}
+          min={1}
+          max={100}
+          step={1}
+        />
       </div>
 
       <div className={tw('flex flex-col gap-1')}>
         <h3 className={tw('text-[#ECDEDE]')}>Pallete</h3>
         <SketchPicker
-          color={'#ECDEDE'}
+          presetColors={[
+            'white',
+            '#1b1b1b',
+            '#34d399',
+            '#60a5fa',
+            '#f87171',
+            '#fbbf24',
+          ]}
+          disableAlpha
+          onChange={(e) =>
+            setDrawSettings((prev) => ({
+              ...prev,
+              strokeStyle: e.hex,
+            }))
+          }
+          color={drawSettings.strokeStyle}
           className={tw(
             css({
               '&': {
@@ -105,6 +137,9 @@ export const DrawSettings = () => {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
+                '& .saturation-white div:nth-child(2)': {
+                  pointerEvents: 'none !important',
+                },
                 '& > div:nth-child(1)': {
                   height: '130px',
                   borderRadius: '4px',
@@ -147,6 +182,8 @@ export const DrawSettings = () => {
                     border: 'none !important',
                     borderTop: '1px solid rgb(204 204 204) !important',
                     borderBottom: '1px solid rgb(204 204 204) !important',
+                    borderRight: '1px solid rgb(204 204 204) !important',
+                    borderRadius: '0px 4px 4px 0px !important',
                   },
                 '& .flexbox-fix:nth-child(3) > div:nth-child(5) > div > input':
                   {
@@ -199,13 +236,11 @@ export const DrawSettings = () => {
                     height: '10px !important',
                     width: '10px !important',
                     borderRadius: '500px !important',
-                    transform: 'translateX(-10px) !important',
                   },
                 '& .hue-horizontal > div > div': {
                   height: '10px !important',
                   width: '10px !important',
                   borderRadius: '500px !important',
-                  transform: 'unset !important',
                 },
                 '& .flexbox-fix:nth-child(4)': {
                   padding: '0px !important',
@@ -223,17 +258,6 @@ export const DrawSettings = () => {
               },
             })
           )}
-          styles={{
-            default: {
-              Saturation: {
-                padding: '40px !important',
-                pointerEvents: 'none',
-              },
-            },
-          }}
-          //   onChange={(e) => {
-          //     updateColor(e.hex, e.hex);
-          //   }}
         />
       </div>
     </div>
