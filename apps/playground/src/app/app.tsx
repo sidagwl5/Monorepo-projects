@@ -1,6 +1,6 @@
 import { Alert } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { tw } from 'twind';
 import { DrawingApp } from '../features/drawingApp';
 import { useDrawingContext } from '../features/drawingApp/Context';
@@ -46,6 +46,14 @@ const SnackbarComponent = forwardRef(
 
 export function App() {
   const { setCurrentAspectRatio, currentAspectRatio } = useDrawingContext();
+
+  useEffect(() => {
+    console.log('useEffect');
+    window.addEventListener('message', (message) => {
+      console.log(message.data, message.origin);
+      if (message.origin === 'http://localhost:4200') console.log(message.data);
+    });
+  }, []);
 
   return (
     <SnackbarProvider
