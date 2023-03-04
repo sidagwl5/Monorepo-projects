@@ -4,7 +4,7 @@ import Tooltip from './Tooltip';
 import { forwardRef } from 'react';
 
 const iconButtonStyles = style({
-  base: 'max-w-[48px] min-w-[48px] min-h-[48px] p-[13px] max-h-[48px] rounded-none outline-none focus:outline-none',
+  base: 'max-w-[48px] min-w-[48px] transition duration-300 min-h-[48px] p-[13px] max-h-[48px] rounded-none outline-none focus:outline-none',
   variants: {
     active: {
       false: 'bg-[#484344] hover:bg-[#484344]',

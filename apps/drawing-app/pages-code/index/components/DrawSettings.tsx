@@ -136,6 +136,7 @@ export const DrawSettings = () => {
                 boxShadow: 'unset !important',
                 display: 'flex',
                 flexDirection: 'column',
+                width: 'unset !important',
                 gap: '12px',
                 '& .saturation-white div:nth-child(2)': {
                   pointerEvents: 'none !important',

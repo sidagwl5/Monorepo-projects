@@ -1,5 +1,6 @@
+import { Popper } from '@mui/material';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { tw } from 'twind';
 import {
   IconButton,
@@ -8,9 +9,9 @@ import {
   pointerCircleSvg,
   shapesSvg,
 } from 'ui-lib';
-import { MoveSettings } from './MoveSettings';
-import { Popover, Popper } from '@mui/material';
 import { DrawSettings } from './DrawSettings';
+import { MoveSettings } from './MoveSettings';
+import { EraserSettings } from './EraserSettings';
 
 const toolOptions = [
   {
@@ -29,6 +30,7 @@ const toolOptions = [
     },
     icon: eraserSvg,
     key: 'eraser',
+    component: <EraserSettings />,
   },
   {
     title: 'Draw',
@@ -51,9 +53,7 @@ const toolOptions = [
 
 const ToolOptions = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [currentOption, setCurrentOption] = useState('select');
-
-  console.log(anchorEl);
+  const [currentOption, setCurrentOption] = useState('draw');
 
   const handleOptionClick = (key, e) => {
     setAnchorEl(e.currentTarget);
@@ -74,7 +74,11 @@ const ToolOptions = () => {
             }
             {...rest}
           >
-            <Image src={icon} alt={rest.title} />
+            <Image
+              className={tw('filter', currentOption === key ? 'invert' : '')}
+              src={icon}
+              alt={rest.title}
+            />
           </IconButton>
           {currentOption === key && (
             <Popper
@@ -82,10 +86,10 @@ const ToolOptions = () => {
               anchorEl={anchorEl}
               open={Boolean(anchorEl)}
               className={tw(
-                '!ml-4 p-3 rounded-lg overflow-hidden  bg-[#574D51] border border-[#695F63]'
+                '!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
               )}
             >
-              <div className={tw('w-50 text-sm font-semibold font-nunitoSans')}>
+              <div className={tw('w-48 text-sm font-semibold font-nunitoSans')}>
                 {component}
               </div>
             </Popper>

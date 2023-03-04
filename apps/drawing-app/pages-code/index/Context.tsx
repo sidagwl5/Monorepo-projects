@@ -7,6 +7,10 @@ export const useDrawingContext = () => useContext(drawingContext);
 
 export const DrawingContextProvider = ({ children }) => {
   const coordinatesRef = useRef<any[]>([]);
+
+  const [eraserSettings, setEraserSettings] = useState({
+    lineWidth: '10',
+  });
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
     lineJoin: true,
@@ -25,6 +29,7 @@ export const DrawingContextProvider = ({ children }) => {
     <drawingContext.Provider
       value={{
         handleCurrentAspectRatio: [currentAspectRatio, setCurrentAspectRatio],
+        handleEraserSettings: [eraserSettings, setEraserSettings],
         handleDrawSettings: [drawSettings, setDrawSettings],
         coordinatesRef: coordinatesRef.current,
       }}
