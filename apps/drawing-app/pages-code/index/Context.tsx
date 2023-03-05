@@ -14,7 +14,7 @@ export const DrawingContextProvider = ({ children }) => {
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
     lineJoin: true,
-    line: false,
+    strokeType: 'doodle',
     lineCap: true,
     strokeStyle: 'white',
     customColor: '#B3FFA1',

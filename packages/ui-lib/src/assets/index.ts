@@ -12,3 +12,4 @@ export { default as crossSvg } from './svgs/cross.svg';
 export { default as resetSvg } from './svgs/reset.svg';
 export { default as arrowRotateLeftSvg } from './svgs/reset.svg';
 export { default as pointerCircleSvg } from './svgs/pointerCircle.svg';
+export { default as settingsSvg } from './svgs/settings.svg';

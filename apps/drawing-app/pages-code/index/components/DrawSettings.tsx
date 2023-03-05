@@ -6,6 +6,8 @@ import { SketchPicker } from 'react-color';
 import { css, tw } from 'twind/style';
 import { Slider } from 'ui-lib';
 import { useDrawingContext } from '../Context';
+import GestureIcon from '@mui/icons-material/Gesture';
+import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
 export const DrawSettings = () => {
   const {
@@ -40,9 +42,10 @@ export const DrawSettings = () => {
 
     canvas.onmousedown = (e) => {
       drawable = true;
-      doodle = drawSettings.line
-        ? new Line(e.offsetX, e.offsetY)
-        : new Doodle(e.offsetX, e.offsetY);
+      doodle =
+        drawSettings.strokeType === 'line'
+          ? new Line(e.offsetX, e.offsetY)
+          : new Doodle(e.offsetX, e.offsetY);
       coordinatesRef.push(doodle);
     };
 
@@ -107,6 +110,34 @@ export const DrawSettings = () => {
           max={100}
           step={1}
         />
+      </div>
+
+      <div className={tw('flex flex-col gap-1')}>
+        <h3 className={tw('text-[#ECDEDE]')}>Stroke Type</h3>
+        <div className={tw('flex gap-2 text-[#ECDEDE]!')}>
+          <span
+            onClick={() =>
+              setDrawSettings((prev) => ({ ...prev, strokeType: 'doodle' }))
+            }
+            className={tw(
+              'h-8 w-8 rounded-md cursor-pointer flex justify-center items-center',
+              drawSettings.strokeType === 'doodle' && 'text-white bg-WildcardBg'
+            )}
+          >
+            <GestureIcon className={tw('p-[2px]')} />
+          </span>
+          <span
+            onClick={() =>
+              setDrawSettings((prev) => ({ ...prev, strokeType: 'line' }))
+            }
+            className={tw(
+              'h-8 w-8 rounded-md cursor-pointer flex justify-center items-center',
+              drawSettings.strokeType === 'line' && 'text-white bg-WildcardBg'
+            )}
+          >
+            <HorizontalRuleIcon className={tw('p-[2px] cursor-pointer')} />
+          </span>
+        </div>
       </div>
 
       <div className={tw('flex flex-col gap-1')}>

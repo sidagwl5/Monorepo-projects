@@ -19,7 +19,7 @@ const CanvasLayout = () => {
       let elementWidth;
       let elementHeight;
 
-      const scale = 3;
+      const scale = 2;
       const diff = 25;
 
       elementWidth = width - diff;

@@ -11,7 +11,6 @@ const SnackbarProvider = ({ children }) => {
       classes={{
         root: tw('min-w-max!'),
       }}
-      anchorOrigin={{ horizontal: 'right', vertical: 'top' }}
       Components={{
         default: Notification,
         success: Notification,

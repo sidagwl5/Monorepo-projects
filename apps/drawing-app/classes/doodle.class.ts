@@ -20,10 +20,29 @@ export class Doodle {
   }
 
   addPoints(_x: number, _y: number) {
-    if (!this.points.length) Canvas.getElements().context.moveTo(_x, _y);
-    else Canvas.getElements().context.lineTo(_x, _y);
+    const { context } = Canvas.getElements();
 
-    this.points.push({ x: _x, y: _y });
+    if (!this.points.length) {
+      Canvas.getElements().context.moveTo(_x, _y);
+      this.points.push({
+        x: _x,
+        y: _y,
+      });
+    } else {
+      const xc = (this.points[this.points.length - 1].x + _x) / 2;
+      const yc = (this.points[this.points.length - 1].y + _y) / 2;
+      context.quadraticCurveTo(
+        this.points[this.points.length - 1].x,
+        this.points[this.points.length - 1].y,
+        xc,
+        yc
+      );
+
+      this.points.push({
+        x: (this.points[this.points.length - 1].x + _x) / 2,
+        y: (this.points[this.points.length - 1].y + _y) / 2,
+      });
+    }
   }
 
   isSelected(_x: number, _y: number) {
