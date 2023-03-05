@@ -1,0 +1,15 @@
+export { default as tickcircleSvg } from './svgs/tickcircle.svg';
+export { default as eraserSvg } from './svgs/eraser.svg';
+export { default as addPenSvg } from './svgs/addPen.svg';
+export { default as shapesSvg } from './svgs/shapes.svg';
+export { default as downloadSvg } from './svgs/download.svg';
+export { default as saveSvg } from './svgs/save.svg';
+export { default as infoCircleSvg } from './svgs/infoCircle.svg';
+export { default as tickSquareSvg } from './svgs/ticksquare.svg';
+export { default as warningSvg } from './svgs/warning.svg';
+export { default as errorCircleSvg } from './svgs/errorcircle.svg';
+export { default as crossSvg } from './svgs/cross.svg';
+export { default as resetSvg } from './svgs/reset.svg';
+export { default as arrowRotateLeftSvg } from './svgs/reset.svg';
+export { default as pointerCircleSvg } from './svgs/pointerCircle.svg';
+export { default as settingsSvg } from './svgs/settings.svg';

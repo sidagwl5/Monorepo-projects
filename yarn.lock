@@ -9160,6 +9160,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"goober@npm:^2.0.33":
+  version: 2.1.12
+  resolution: "goober@npm:2.1.12"
+  peerDependencies:
+    csstype: ^3.0.10
+  checksum: 5945cbe92413031b8859d9087d125a744149e237c8bcf6c15db1998ee3d1b6d680ee4a47dd420f95684b76f72eebc34e98155e8a1cb06748d00cbdc05ede186d
+  languageName: node
+  linkType: hard
+
 "gopd@npm:^1.0.1":
   version: 1.0.1
   resolution: "gopd@npm:1.0.1"
@@ -9268,7 +9277,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"hoist-non-react-statics@npm:^3.3.0, hoist-non-react-statics@npm:^3.3.1":
+"hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
   dependencies:
@@ -12028,24 +12037,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"notistack@npm:^2.0.8":
-  version: 2.0.8
-  resolution: "notistack@npm:2.0.8"
+"notistack@npm:alpha":
+  version: 3.0.0-alpha.11
+  resolution: "notistack@npm:3.0.0-alpha.11"
   dependencies:
     clsx: ^1.1.0
-    hoist-non-react-statics: ^3.3.0
+    goober: ^2.0.33
   peerDependencies:
-    "@emotion/react": ^11.4.1
-    "@emotion/styled": ^11.3.0
-    "@mui/material": ^5.0.0
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
     react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-  peerDependenciesMeta:
-    "@emotion/react":
-      optional: true
-    "@emotion/styled":
-      optional: true
-  checksum: f95952ea7209840f6f05a65e74f0fb4e7a1bb321753b2955ae6052f2205d47a6a3c50a42b72db11eac2fc491c4105b4687bed89e79287399530973fa133a5380
+  checksum: c7883349e47a9ef16c8f89eaf4a4f62682133607fe970ffa80fa922d32f6b62af842d329f418189957b71db7aeebe07bff15637d7f5222e806c26e2246598a4f
   languageName: node
   linkType: hard
 
@@ -13225,7 +13226,7 @@ __metadata:
     jsdom: ~20.0.3
     lodash-es: ^4.17.21
     next: 13.1.1
-    notistack: ^2.0.8
+    notistack: alpha
     nx: 15.4.5
     react: 18.2.0
     react-color: ^2.19.3

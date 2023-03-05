@@ -69,7 +69,7 @@ export function App() {
       {!currentAspectRatio ? (
         <div
           className={tw(
-            'flex h-full flex-col gap-7 items-center sm:items-start justify-center text-white'
+            'flex h-full flex-col gap-7 bg-SecondaryBg items-center sm:items-start justify-center text-white'
           )}
         >
           <h1 className={tw('text-2xl md:text-2.5xl font-semibold')}>

@@ -65,7 +65,7 @@
     "js-cookie": "^3.0.1",
     "lodash-es": "^4.17.21",
     "next": "13.1.1",
-    "notistack": "^2.0.8",
+    "notistack": "alpha",
     "react": "18.2.0",
     "react-color": "^2.19.3",
     "react-device-detect": "^2.2.2",
