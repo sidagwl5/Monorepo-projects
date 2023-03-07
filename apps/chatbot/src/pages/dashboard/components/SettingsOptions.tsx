@@ -1,8 +1,16 @@
 import { tw } from 'twind/style';
-import { IconButton, settingsSvg } from 'ui-lib';
+import { IconButton, notificationsSvg, settingsSvg } from 'ui-lib';
 import messageSvg from '../../../assets/svgs/message.svg';
 
 const settingsOptions = [
+  {
+    title: 'Notifications',
+    icon: notificationsSvg,
+    key: 'notifications',
+    tooltipProps: {
+      title: 'Notifications',
+    },
+  },
   {
     title: 'Settings',
     icon: settingsSvg,
@@ -14,7 +22,7 @@ const settingsOptions = [
   {
     title: 'Messages',
     icon: messageSvg,
-    key: 'settings',
+    key: 'messages',
     tooltipProps: {
       title: 'Messages',
     },
@@ -26,9 +34,9 @@ const SettingsOptions = () => {
 
   return (
     <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-      {settingsOptions.map(({ icon, key, component, ...rest }) => (
+      {settingsOptions.map(({ icon, key, component, title, ...rest }) => (
         <IconButton key={key} onClick={handleOptionClick} {...rest}>
-          <img src={icon} alt={rest.title} />
+          <img src={icon} alt={title} />
         </IconButton>
       ))}
     </div>

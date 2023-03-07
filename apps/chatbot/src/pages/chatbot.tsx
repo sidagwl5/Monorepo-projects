@@ -4,9 +4,11 @@ import { tw } from 'twind/style';
 import crossSvg from '../assets/svgs/cross.svg';
 import messageSvg from '../assets/svgs/message.svg';
 import Chat from '../components/Chat';
+import jsCookie from 'js-cookie';
+import FillForm from '../components/FillForm';
 
 export function Chatbot() {
-  const currentInitiator = useRef(crypto.randomUUID());
+  const [currentInitiator, setCurrentInitiator] = useState(false);
   const botQuestions = useRef({
     1: {
       initiator: 'bot',
@@ -46,15 +48,20 @@ export function Chatbot() {
           open && 'top-[-8px] opacity-100'
         )}
       >
-        <Chat
-          messages={messages}
-          onMessageAdded={(message) => {
-            setMessages((prev) => {
-              return [...prev, message];
-            });
-          }}
-          currentInitiator={currentInitiator}
-        />
+        {currentInitiator ? (
+          <Chat
+            messages={messages}
+            onMessageAdded={(message) => {
+              setMessages((prev) => {
+                return [...prev, message];
+              });
+            }}
+            classes={{ root: 'h-[420px]' }}
+            currentInitiator={currentInitiator}
+          />
+        ) : (
+          <FillForm handleSubmitForm={setCurrentInitiator.bind(this, true)} />
+        )}
       </div>
       <div
         onClick={setOpen.bind(this, !open)}

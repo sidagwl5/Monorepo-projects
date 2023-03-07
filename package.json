@@ -71,6 +71,7 @@
     "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
     "react-dropzone": "^14.2.3",
+    "react-hook-form": "^7.43.5",
     "react-router-dom": "6.4.3",
     "react-use": "^17.4.0",
     "regenerator-runtime": "0.13.7",

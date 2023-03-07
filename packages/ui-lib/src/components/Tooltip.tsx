@@ -1,7 +1,7 @@
-import { Tooltip as MuiTooltip } from '@mui/material';
+import { Tooltip as MuiTooltip, TooltipProps } from '@mui/material';
 import { tw, css, apply } from 'twind/style';
 
-const Tooltip = ({ children, ...rest }) => {
+const Tooltip = ({ children, ...rest }: Omit<TooltipProps, 'classes'>) => {
   return (
     <MuiTooltip
       arrow

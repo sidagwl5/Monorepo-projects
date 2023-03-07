@@ -13233,6 +13233,7 @@ __metadata:
     react-device-detect: ^2.2.2
     react-dom: 18.2.0
     react-dropzone: ^14.2.3
+    react-hook-form: ^7.43.5
     react-router-dom: 6.4.3
     react-test-renderer: 18.2.0
     react-use: ^17.4.0
@@ -13523,6 +13524,15 @@ __metadata:
   peerDependencies:
     react: ">= 16.8 || 18.0.0"
   checksum: 174b744d5ca898cf3d84ec1aeb6cef5211c446697e45dc8ece8287a03d291f8d07253206d5a1247ef156fd385d65e7de666d4d5c2986020b8543b8f2434e8b40
+  languageName: node
+  linkType: hard
+
+"react-hook-form@npm:^7.43.5":
+  version: 7.43.5
+  resolution: "react-hook-form@npm:7.43.5"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18
+  checksum: cfd757ac24bc81946d97183d061f38c8b602baaf9d019e87a905ce66f3a9f1d91d3a21002b921f8322e79b2afa9a4921b7c2d76e594fcf384e1b96889de2f2f5
   languageName: node
   linkType: hard
 

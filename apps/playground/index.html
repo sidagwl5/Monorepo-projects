@@ -40,7 +40,7 @@
     <script type="module" src="/src/main.tsx"></script>
     <script>
       const iframeElement = document.createElement('iframe');
-      iframeElement.src = 'http://localhost:4200';
+      iframeElement.src = 'http://localhost:4200/chatbot';
       iframeElement.frameBorder = 'none';
 
       iframeElement.style.position = 'fixed';
@@ -51,15 +51,6 @@
       iframeElement.style.background = 'transparent';
 
       document.body.append(iframeElement);
-
-      // iframeElement.onload = () => {
-      //   setTimeout(() => {
-      //     console.log('loaded');
-      //     iframeElement.contentWindow.parent.postMessage('or bhai saab!', '*');
-      //   }, 4000);
-      // };
-
-      // window.postMessage('or bhai sab shi!', 'http://localhost:4200');
     </script>
   </body>
 </html>

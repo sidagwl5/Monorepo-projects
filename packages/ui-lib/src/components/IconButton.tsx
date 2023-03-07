@@ -1,7 +1,11 @@
-import { IconButton as MuiIconButton } from '@mui/material';
+import {
+  IconButtonProps,
+  IconButton as MuiIconButton,
+  TooltipProps,
+} from '@mui/material';
 import { tw, style } from 'twind/style';
 import Tooltip from './Tooltip';
-import { forwardRef } from 'react';
+import { ReactElement, forwardRef } from 'react';
 
 const iconButtonStyles = style({
   base: 'max-w-[48px] min-w-[48px] transition duration-300 min-h-[48px] p-[13px] max-h-[48px] rounded-none outline-none focus:outline-none',
@@ -16,13 +20,24 @@ const iconButtonStyles = style({
   },
 });
 
+interface IconButtonEl extends IconButtonProps {
+  children: ReactElement;
+  active?: boolean;
+  tooltipProps?: Omit<TooltipProps, 'children'>;
+  className?: string;
+}
+
 export const IconButton = forwardRef(
   (
-    { children, active = false, tooltipProps = {}, className = '', ...rest },
-    ref
+    {
+      children,
+      active = false,
+      tooltipProps = { title: '' },
+      className,
+      ...rest
+    }: IconButtonEl,
+    ref: IconButtonEl['ref']
   ) => {
-    console.log(rest, ref);
-
     return (
       <Tooltip {...tooltipProps}>
         <MuiIconButton
