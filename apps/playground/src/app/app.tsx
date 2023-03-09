@@ -1,6 +1,6 @@
 import { Alert } from '@mui/material';
 import { SnackbarProvider, useSnackbar } from 'notistack';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 import { tw } from 'twind';
 import { DrawingApp } from '../features/drawingApp';
 import { useDrawingContext } from '../features/drawingApp/Context';
@@ -47,6 +47,14 @@ const SnackbarComponent = forwardRef(
 export function App() {
   const { setCurrentAspectRatio, currentAspectRatio } = useDrawingContext();
 
+  useEffect(() => {
+    console.log('useEffect');
+    window.addEventListener('message', (message) => {
+      console.log(message.data, message.origin);
+      if (message.origin === 'http://localhost:4200') console.log(message.data);
+    });
+  }, []);
+
   return (
     <SnackbarProvider
       maxSnack={2}
@@ -61,7 +69,7 @@ export function App() {
       {!currentAspectRatio ? (
         <div
           className={tw(
-            'flex h-full flex-col gap-7 items-center sm:items-start justify-center text-white'
+            'flex h-full flex-col gap-7 bg-SecondaryBg items-center sm:items-start justify-center text-white'
           )}
         >
           <h1 className={tw('text-2xl md:text-2.5xl font-semibold')}>
