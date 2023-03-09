@@ -1,13 +1,14 @@
-import DoneIcon from '@mui/icons-material/Done';
-import { Tooltip } from '@mui/material';
 import { useEffect } from 'react';
-import { css, tw } from 'twind/style';
+import { tw } from 'twind/style';
 import movePng from '../../../assets/move.png';
 import { useDrawingContext } from '../Context';
 import { Canvas } from '../classes/canvas.class';
+import { ColorPalette } from './ColorPallete';
+import { Doodle } from '../classes/doodle.class';
 
 export const CanvasSettings = () => {
-  const { canvasSettings, setCanvasSettings } = useDrawingContext();
+  const { canvasSettings, setCanvasSettings, coordinatesRef } =
+    useDrawingContext();
 
   useEffect(() => {
     Canvas.getElements().canvas.style.cursor = `url(${movePng}), auto`;
@@ -20,9 +21,11 @@ export const CanvasSettings = () => {
   }, [canvasSettings.bg_color]);
 
   useEffect(() => {
-    const { canvas } = Canvas.getElements();
+    const { canvas, context } = Canvas.getElements();
 
+    let doodleSelected: Doodle | undefined;
     let move = false,
+      moveDoodle = false,
       prevPageX = 0,
       prevPageY = 0;
 
@@ -32,10 +35,51 @@ export const CanvasSettings = () => {
         prevPageX = 0;
         prevPageY = 0;
       }
+
+      Canvas.storeImageData();
+      moveDoodle = false;
     };
 
     canvas.onmousedown = (e) => {
-      move = true;
+      const _doodleSelected = coordinatesRef.find((line) =>
+        line.isSelected(e.offsetX, e.offsetY)
+      );
+
+      if (_doodleSelected && doodleSelected?.id !== _doodleSelected.id) {
+        doodleSelected?.eraseSelectionBox();
+        doodleSelected = _doodleSelected;
+      }
+
+      if (doodleSelected) {
+        const isCursorInside = doodleSelected.isCursorInside(
+          e.offsetX,
+          e.offsetY
+        );
+
+        if (!isCursorInside) {
+          doodleSelected?.eraseSelectionBox();
+          doodleSelected = undefined;
+          move = true;
+        } else {
+          context.save();
+          context.strokeStyle = 'yellow';
+          context.lineWidth = 2;
+
+          const { x_max, x_min, y_max, y_min } =
+            doodleSelected.calculateBoxDimensions();
+          context.strokeRect(
+            x_min - 2,
+            y_min - 2,
+            x_max - x_min + 4,
+            y_max - y_min + 4
+          );
+
+          context.restore();
+          moveDoodle = true;
+        }
+      } else {
+        move = true;
+      }
     };
 
     canvas.onmouseup = onDrawingStop;
@@ -53,7 +97,26 @@ export const CanvasSettings = () => {
           parseInt(canvas.style.top || window.getComputedStyle(canvas).top) +
           e.movementY
         }px`;
+      } else if (doodleSelected && moveDoodle) {
+        Canvas.clearCanvas();
+        coordinatesRef.forEach((v) => {
+          if (v.id === doodleSelected.id) {
+            doodleSelected.move(e.movementX, e.movementY);
+            doodleSelected?.drawSelectionBox();
+          } else {
+            v.drawAgain();
+          }
+        });
       }
+      // else {
+      //   const doodleSelected = coordinatesRef.find((line) =>
+      //     line.isSelected(e.offsetX, e.offsetY)
+      //   );
+
+      //   if (doodleSelected)
+      //     Canvas.getElements().canvas.style.cursor = `pointer`;
+      //   else Canvas.getElements().canvas.style.cursor = `url(${movePng}), auto`;
+      // }
     };
 
     canvas.ontouchstart = (e) => {
@@ -90,86 +153,42 @@ export const CanvasSettings = () => {
       prevPageY = touch.pageY;
       canvas.dispatchEvent(mouseDown);
     };
+
+    window.onkeydown = (e) => {
+      if (e.code === 'Delete') {
+        if (doodleSelected) {
+          Canvas.clearCanvas();
+          const getIndex = coordinatesRef.findIndex(
+            (v) => v.id === doodleSelected?.id
+          );
+
+          coordinatesRef.splice(getIndex, 1);
+
+          coordinatesRef.forEach((v) => {
+            v.drawAgain();
+          });
+
+          Canvas.storeImageData();
+        }
+      }
+    };
   }, []);
 
   return (
     <div className={tw('text-white flex flex-col gap-2')}>
       <p className={tw('font-medium text-sm capitalize')}>Bg Color</p>
-      <div className={tw('w-full flex gap-2')}>
-        {[
-          { title: 'green', value: 'green' },
-          { title: 'blue', value: 'blue' },
-          { title: 'red', value: 'red' },
-          { title: 'pink', value: 'pink' },
-          { title: 'yellow', value: 'yellow' },
-          { title: 'hazelnut', value: '#313142' },
-        ].map(({ title, value }) => (
-          <Tooltip arrow title={title} disableInteractive placement="top">
-            <div className={tw('relative cursor-pointer')}>
-              {value === canvasSettings.bg_color && (
-                <div
-                  onClick={() => {
-                    setCanvasSettings((prev: any) => ({
-                      ...prev,
-                      bg_color: value,
-                    }));
-                  }}
-                  className={tw(
-                    'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                    css({ background: 'rgba(0, 0, 0, 0.2)' })
-                  )}
-                >
-                  <DoneIcon className={tw('text-white text-[16px]!')} />
-                </div>
-              )}
-              <div
-                onClick={() => {
-                  setCanvasSettings((prev: any) => ({
-                    ...prev,
-                    bg_color: value,
-                  }));
-                }}
-                className={tw(
-                  'w-6 h-6 rounded-full',
-                  title === 'hazelnut'
-                    ? css({ background: value })
-                    : `bg-${value}-400`
-                )}
-              />
-            </div>
-          </Tooltip>
-        ))}
 
-        <Tooltip arrow title={'white'} disableInteractive placement="top">
-          <div className={tw('relative cursor-pointer')}>
-            {'white' === canvasSettings.bg_color && (
-              <div
-                onClick={() => {
-                  setCanvasSettings((prev: any) => ({
-                    ...prev,
-                    bg_color: 'white',
-                  }));
-                }}
-                className={tw(
-                  'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                  css({ background: 'rgba(0, 0, 0, 0.2)' })
-                )}
-              >
-                <DoneIcon className={tw('text-white text-[16px]!')} />
-              </div>
-            )}
-            <div
-              onClick={() => {
-                setCanvasSettings((prev: any) => ({
-                  ...prev,
-                  bg_color: 'white',
-                }));
-              }}
-              className={tw('w-6 h-6 rounded-full', `bg-white`)}
-            />
-          </div>
-        </Tooltip>
-      </div>
+      <ColorPalette
+        customColor={canvasSettings.customColor}
+        currentColor={canvasSettings.bg_color}
+        updateColor={(bg_color: string, customColor: string) => {
+          setCanvasSettings((prev: any) => ({
+            ...prev,
+            bg_color,
+            customColor,
+          }));
+        }}
+      />
     </div>
   );
 };

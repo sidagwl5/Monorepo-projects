@@ -7,6 +7,7 @@ import { Canvas } from '../classes/canvas.class';
 import { Doodle } from '../classes/doodle.class';
 import { Line } from '../classes/line.class';
 import penPng from '../../../assets/pen.png';
+import { ColorPalette } from './ColorPallete';
 
 const settingsOption = [
   {
@@ -41,10 +42,6 @@ export const DrawSettings = () => {
   }, []);
 
   useEffect(() => {
-    if (!drawSettings.delete) Canvas.putImageData();
-  }, [drawSettings.delete]);
-
-  useEffect(() => {
     Canvas.updateContextConfig({
       ...drawSettings,
       globalCompositeOperation: 'source-over',
@@ -56,7 +53,6 @@ export const DrawSettings = () => {
 
     let drawable = false;
     let doodle: Doodle | Line;
-    let doodleSelected: Doodle | undefined;
 
     const onDrawingStop = (e) => {
       if (drawable) {
@@ -72,39 +68,13 @@ export const DrawSettings = () => {
     };
 
     canvas.onmousedown = (e) => {
-      if (drawSettings.delete) {
-        console.log(coordinatesRef);
+      drawable = true;
 
-        doodleSelected = coordinatesRef.find((line) =>
-          line.isSelected(e.offsetX, e.offsetY)
-        );
-
-        if (doodleSelected) {
-          Canvas.putImageData();
-          context.save();
-          context.strokeStyle = 'yellow';
-          context.lineWidth = 2;
-
-          const { x_max, x_min, y_max, y_min } =
-            doodleSelected.calculateBoxDimensions();
-          context.strokeRect(
-            x_min - 2,
-            y_min - 2,
-            x_max - x_min + 4,
-            y_max - y_min + 4
-          );
-
-          context.restore();
-        }
-      } else {
-        drawable = true;
-
-        canvas.style.border = '1px yellow solid';
-        doodle = drawSettings.line
-          ? new Line(e.offsetX, e.offsetY)
-          : new Doodle(e.offsetX, e.offsetY);
-        coordinatesRef.push(doodle);
-      }
+      canvas.style.border = '1px yellow solid';
+      doodle = drawSettings.line
+        ? new Line(e.offsetX, e.offsetY)
+        : new Doodle(e.offsetX, e.offsetY);
+      coordinatesRef.push(doodle);
     };
 
     canvas.onmouseup = onDrawingStop;
@@ -148,25 +118,6 @@ export const DrawSettings = () => {
 
       canvas.dispatchEvent(mouseDown);
     };
-
-    window.onkeydown = (e) => {
-      if (e.code === 'Delete') {
-        if (doodleSelected) {
-          Canvas.clearCanvas();
-          const getIndex = coordinatesRef.findIndex(
-            (v) => v.id === doodleSelected?.id
-          );
-
-          coordinatesRef.splice(getIndex, 1);
-
-          coordinatesRef.forEach((v) => {
-            v.drawAgain();
-          });
-
-          Canvas.storeImageData();
-        }
-      }
-    };
   }, [
     drawSettings.smooth_line,
     drawSettings.line,
@@ -196,77 +147,18 @@ export const DrawSettings = () => {
 
       <div className={tw('text-white flex flex-col gap-1')}>
         <p className={tw('font-medium text-sm capitalize')}>Colors</p>
-        <div className={tw('w-full flex gap-2')}>
-          {['green', 'blue', 'red', 'pink', 'yellow'].map((strokeStyle) => (
-            <Tooltip
-              arrow
-              title={strokeStyle}
-              disableInteractive
-              placement="top"
-            >
-              <div className={tw('relative cursor-pointer')}>
-                {strokeStyle === drawSettings.strokeStyle && (
-                  <div
-                    onClick={() => {
-                      setDrawSettings((prev: any) => ({
-                        ...prev,
-                        strokeStyle,
-                      }));
-                    }}
-                    className={tw(
-                      'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                      css({ background: 'rgba(0, 0, 0, 0.2)' })
-                    )}
-                  >
-                    <DoneIcon className={tw('text-white text-[16px]!')} />
-                  </div>
-                )}
-                <div
-                  onClick={() => {
-                    setDrawSettings((prev: any) => ({
-                      ...prev,
-                      strokeStyle,
-                    }));
-                  }}
-                  className={tw(
-                    'w-6 h-6 rounded-full',
-                    `bg-${strokeStyle}-400`
-                  )}
-                />
-              </div>
-            </Tooltip>
-          ))}
 
-          <Tooltip arrow title={'white'} disableInteractive placement="top">
-            <div className={tw('relative cursor-pointer')}>
-              {'white' === drawSettings.strokeStyle && (
-                <div
-                  onClick={() => {
-                    setDrawSettings((prev: any) => ({
-                      ...prev,
-                      strokeStyle: 'white',
-                    }));
-                  }}
-                  className={tw(
-                    'w-6 h-6 rounded-full flex items-center justify-center absolute top-0 left-0',
-                    css({ background: 'rgba(0, 0, 0, 0.2)' })
-                  )}
-                >
-                  <DoneIcon className={tw('text-white text-[16px]!')} />
-                </div>
-              )}
-              <div
-                onClick={() => {
-                  setDrawSettings((prev: any) => ({
-                    ...prev,
-                    strokeStyle: 'white',
-                  }));
-                }}
-                className={tw('w-6 h-6 rounded-full', `bg-white`)}
-              />
-            </div>
-          </Tooltip>
-        </div>
+        <ColorPalette
+          customColor={drawSettings.customColor}
+          currentColor={drawSettings.strokeStyle}
+          updateColor={(strokeStyle: string, customColor: string) => {
+            setDrawSettings((prev: any) => ({
+              ...prev,
+              strokeStyle,
+              customColor,
+            }));
+          }}
+        />
       </div>
 
       <div className={tw('flex flex-col gap-2')}>

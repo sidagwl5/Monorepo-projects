@@ -81,7 +81,3 @@ body {
 .sketch-picker .flexbox-fix:nth-child(4) div {
   margin: 0px !important;
 }
-
-.saturation-white div:nth-child(2) {
-  pointer-events: none !important;
-}
