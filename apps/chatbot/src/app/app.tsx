@@ -9,7 +9,7 @@ import useHandleNotifications from '../hooks/useHandleNotifications';
 export function App() {
   return (
     <StyledEngineProvider injectFirst>
-      <div className={tw('w-full h-screen flex gap-2 bg-rootContainerClr')}>
+      <div className={tw('w-full h-screen flex gap-2')}>
         <SnackbarProvider excludePaths={['/chatbot']}>
           <BrowserRouter>
             {useHandleNotifications()}

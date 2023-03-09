@@ -3,7 +3,13 @@ import { MessageElement } from './MessageElement';
 import { useEffect, useRef } from 'react';
 import dayjs from 'dayjs';
 
-const Chat = ({ messages, currentInitiator, classes, onMessageAdded }) => {
+const Chat = ({
+  messages,
+  currentInitiator,
+  classes,
+  onMessageAdded,
+  receiver,
+}) => {
   const scrollDecoyRef = useRef<HTMLDivElement>(null);
   const { root } = classes || {};
 
@@ -32,7 +38,6 @@ const Chat = ({ messages, currentInitiator, classes, onMessageAdded }) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          console.log('jere');
           const inputElement = document.getElementById(
             'input'
           ) as HTMLInputElement;
@@ -43,6 +48,7 @@ const Chat = ({ messages, currentInitiator, classes, onMessageAdded }) => {
               id: crypto.randomUUID(),
               title: value,
               initiator: currentInitiator,
+              receiver,
               time: dayjs().toISOString(),
             });
 
