@@ -1,17 +1,10 @@
-import { Popper } from '@mui/material';
 import Image from 'next/image';
 import { useState } from 'react';
 import { tw } from 'twind';
-import {
-  IconButton,
-  addPenSvg,
-  eraserSvg,
-  pointerCircleSvg,
-  shapesSvg,
-} from 'ui-lib';
+import { IconButton, addPenSvg, eraserSvg, pointerCircleSvg } from 'ui-lib';
 import { DrawSettings } from './DrawSettings';
-import { MoveSettings } from './MoveSettings';
 import { EraserSettings } from './EraserSettings';
+import { MoveSettings } from './MoveSettings';
 
 const toolOptions = [
   {
@@ -21,16 +14,7 @@ const toolOptions = [
     },
     icon: pointerCircleSvg,
     key: 'select',
-    component: <MoveSettings />,
-  },
-  {
-    title: 'Eraser',
-    tooltipProps: {
-      title: `Eraser (E)`,
-    },
-    icon: eraserSvg,
-    key: 'eraser',
-    component: <EraserSettings />,
+    Component: MoveSettings,
   },
   {
     title: 'Draw',
@@ -39,21 +23,30 @@ const toolOptions = [
     },
     icon: addPenSvg,
     key: 'draw',
-    component: <DrawSettings />,
+    Component: DrawSettings,
   },
   {
-    title: 'Shapes',
+    title: 'Eraser',
     tooltipProps: {
-      title: `Shapes (S)`,
+      title: `Eraser (E)`,
     },
-    icon: shapesSvg,
-    key: 'shapes',
+    icon: eraserSvg,
+    key: 'eraser',
+    Component: EraserSettings,
   },
+  // {
+  //   title: 'Shapes',
+  //   tooltipProps: {
+  //     title: `Shapes (S)`,
+  //   },
+  //   icon: shapesSvg,
+  //   key: 'shapes',
+  // },
 ];
 
 const ToolOptions = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [currentOption, setCurrentOption] = useState('draw');
+  const [currentOption, setCurrentOption] = useState('select');
 
   const handleOptionClick = (key, e) => {
     setAnchorEl(e.currentTarget);
@@ -61,8 +54,12 @@ const ToolOptions = () => {
   };
 
   return (
-    <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-      {toolOptions.map(({ icon, key, component, ...rest }) => (
+    <div
+      className={tw(
+        'rounded-lg overflow-hidden absolute left-0 top-[50%] translate-y-[-50%] flex flex-col'
+      )}
+    >
+      {toolOptions.map(({ icon, key, Component, ...rest }) => (
         <>
           <IconButton
             key={key}
@@ -80,19 +77,8 @@ const ToolOptions = () => {
               alt={rest.title}
             />
           </IconButton>
-          {currentOption === key && component && (
-            <Popper
-              placement="left-start"
-              anchorEl={anchorEl}
-              open={Boolean(anchorEl)}
-              className={tw(
-                '!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
-              )}
-            >
-              <div className={tw('w-48 text-sm font-semibold font-nunitoSans')}>
-                {component}
-              </div>
-            </Popper>
+          {currentOption === key && Component && (
+            <Component anchorEl={anchorEl} />
           )}
         </>
       ))}

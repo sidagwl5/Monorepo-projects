@@ -1,9 +1,8 @@
-import { tw } from 'twind';
-import LayoutOptions from '../pages-code/index/components/LayoutOptions';
 import { useState } from 'react';
-import { layouts } from '../pages-code/index/staticData';
-import DrawingUI from '../pages-code/index/components/DrawingUI';
+import { tw } from 'twind';
 import { Button } from 'ui-lib';
+import DrawingUI from '../pages-code/index/components/DrawingUI';
+import LayoutOptions from '../pages-code/index/components/LayoutOptions';
 
 const DrawingApp = () => {
   const [proceed, setProceed] = useState(false);
@@ -12,7 +11,7 @@ const DrawingApp = () => {
     <section
       id="root_container"
       className={tw(
-        'w-full h-screen p-3 bg-[#3A3335] flex justify-center items-center'
+        'w-full h-screen p-3 bg-rootContainerClr flex justify-center items-center'
       )}
     >
       {!proceed ? (

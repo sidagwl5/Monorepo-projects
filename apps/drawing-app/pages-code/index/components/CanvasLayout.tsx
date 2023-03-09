@@ -56,10 +56,9 @@ const CanvasLayout = () => {
       <canvas
         ref={Canvas.initialize}
         className={tw(
-          'relative',
+          'relative bg-canvasClr',
           css({
             transition: '0.3s background ease-out',
-            background: 'rgba(255, 255, 255, 0.08)',
           })
         )}
         id="canvas"

@@ -4,8 +4,10 @@ setup({
   theme: {
     extend: {
       colors: {
-        rootContainerClr: '#3A3335',
+        rootContainerClr: '#322B2D',
         SecondaryBg: '#C8EAD3',
+        optionsClr: '#554A4E',
+        canvasClr: '#423B3D',
         WildcardBg: '#AC8EFF',
         dangerBg: '#EC2757',
       },

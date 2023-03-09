@@ -29,7 +29,9 @@ export const FullScreenOptions = () => {
   return (
     <div
       ref={divRef}
-      className={tw('rounded-lg overflow-hidden text-white flex flex-col')}
+      className={tw(
+        'rounded-lg absolute bottom-0 left-0 overflow-hidden text-white flex flex-col'
+      )}
     >
       <IconButton
         tooltipProps={{

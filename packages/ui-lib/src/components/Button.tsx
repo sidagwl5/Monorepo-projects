@@ -1,24 +1,25 @@
+import { CircularProgress, TooltipProps } from '@mui/material';
+import { ButtonHTMLAttributes } from 'react';
 import { tw } from 'twind';
 import Tooltip from './Tooltip';
-import { CircularProgress, TooltipProps } from '@mui/material';
-import { ReactElement } from 'react';
+interface IButton extends ButtonHTMLAttributes<HTMLButtonElement> {
+  loading?: boolean;
+  className?: string;
+  tooltipProps?: Omit<TooltipProps, 'children'>;
+}
 
 export const Button = ({
   children,
   loading = false,
   className = '',
+  disabled,
   tooltipProps = { title: '' },
   ...rest
-}: {
-  children: ReactElement;
-  loading: boolean;
-  className: string;
-  tooltipProps?: Omit<TooltipProps, 'children'>;
-}) => {
+}: IButton) => {
   return (
     <Tooltip {...tooltipProps}>
       <button
-        disabled={loading}
+        disabled={loading || disabled}
         className={tw(
           `bg-SecondaryBg px-5 text-black font-medium outline-none focus:outline-none py-2.5 rounded-lg flex justify-center items-center font-nunitoSans`,
           className

@@ -3,8 +3,9 @@ import { Canvas } from '../../../classes/canvas.class';
 import SettingsOverscanIcon from '@mui/icons-material/SettingsOverscan';
 import { tw } from 'twind';
 import { useDrawingContext } from '../Context';
+import { Popper } from '@mui/material';
 
-export const MoveSettings = () => {
+export const MoveSettings = ({ anchorEl }) => {
   const {
     handleMoveSettings: [moveSettings, setMoveSettings],
   } = useDrawingContext();
@@ -87,23 +88,37 @@ export const MoveSettings = () => {
   }, []);
 
   return (
-    <div className={tw('w-full flex-col flex gap-4')}>
-      <div className={tw('flex flex-col gap-1')}>
-        <h3 className={tw('text-[#ECDEDE]')}>Type</h3>
-        <div className={tw('flex gap-2 text-[#ECDEDE]!')}>
-          <span
-            onClick={() =>
-              setMoveSettings((prev) => ({ ...prev, type: 'canvas' }))
-            }
-            className={tw(
-              'h-8 w-8 rounded-md cursor-pointer flex justify-center items-center',
-              moveSettings.type === 'canvas' && 'text-white bg-WildcardBg'
-            )}
-          >
-            <SettingsOverscanIcon />
-          </span>
-        </div>
-      </div>
-    </div>
+    // <Popper
+    //   placement="left-start"
+    //   anchorEl={anchorEl}
+    //   open={Boolean(anchorEl)}
+    //   className={tw(
+    //     '!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
+    //   )}
+    // >
+    //   <div
+    //     className={tw(
+    //       'flex-col flex gap-4 w-48 text-sm font-semibold font-nunitoSans'
+    //     )}
+    //   >
+    //     <div className={tw('flex flex-col gap-1')}>
+    //       <h3 className={tw('text-[#ECDEDE]')}>Type</h3>
+    //       <div className={tw('flex gap-2 text-[#ECDEDE]!')}>
+    //         <span
+    //           onClick={() =>
+    //             setMoveSettings((prev) => ({ ...prev, type: 'canvas' }))
+    //           }
+    //           className={tw(
+    //             'h-8 w-8 rounded-md cursor-pointer flex justify-center items-center',
+    //             moveSettings.type === 'canvas' && 'text-white bg-WildcardBg'
+    //           )}
+    //         >
+    //           <SettingsOverscanIcon />
+    //         </span>
+    //       </div>
+    //     </div>
+    //   </div>
+    // </Popper>
+    null
   );
 };

@@ -19,13 +19,17 @@ const settingsOptions = [
 const SettingsOptions = () => {
   const [open, setOpen] = useState(false);
 
-  const handleOptionClick = (key, e) => {
+  const handleOptionClick = () => {
     setOpen(true);
   };
 
   return (
-    <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-      {settingsOptions.map(({ icon, key, component, ...rest }) => (
+    <div
+      className={tw(
+        'rounded-lg overflow-hidden absolute top-0 left-0 flex flex-col'
+      )}
+    >
+      {settingsOptions.map(({ icon, key, ...rest }) => (
         <>
           <IconButton key={key} onClick={handleOptionClick} {...rest}>
             <Image src={icon} alt={rest.title} />

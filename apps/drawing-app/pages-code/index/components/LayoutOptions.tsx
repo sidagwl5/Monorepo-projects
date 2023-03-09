@@ -33,10 +33,10 @@ const LayoutOptions = ({ children }) => {
             key={value}
             onClick={setCurrentAspectRatio.bind(this, value)}
             className={tw(
-              'w-28 sm:w-32 bg-[#494345] rounded-md relative items-center font-medium cursor-pointer flex justify-center items-center',
+              'w-28 sm:w-32 bg-canvasClr rounded-md relative items-center font-medium cursor-pointer flex justify-center items-center',
               currentAspectRatio === value
-                ? 'bg-[#716A6C]'
-                : 'hover:border hover:border-[#716A6C]',
+                ? 'bg-optionsClr'
+                : 'hover:border hover:border-2 hover:border-optionsClr',
               css({ aspectRatio: value })
             )}
           >

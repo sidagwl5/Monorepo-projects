@@ -1,12 +1,12 @@
-import { css, tw } from 'twind/style';
-import { useDrawingContext } from '../Context';
+import { Popper } from '@mui/material';
 import { useEffect } from 'react';
-import { Canvas } from '../../../classes/canvas.class';
-import eraserPng from '../../../assets/eraser.png';
-import { Doodle } from '../../../classes/doodle.class';
+import { tw } from 'twind/style';
 import { Slider } from 'ui-lib';
+import { Canvas } from '../../../classes/canvas.class';
+import { Doodle } from '../../../classes/doodle.class';
+import { useDrawingContext } from '../Context';
 
-export const EraserSettings = () => {
+export const EraserSettings = ({ anchorEl }) => {
   const {
     handleEraserSettings: [eraserSettings, setEraserSettings],
     coordinatesRef,
@@ -87,22 +87,35 @@ export const EraserSettings = () => {
   }, [coordinatesRef]);
 
   return (
-    <div className={tw('w-full flex-col flex gap-4')}>
-      <div className={tw('flex flex-col gap-1')}>
-        <h3 className={tw('text-[#ECDEDE]')}>Thickness</h3>
-        <Slider
-          value={eraserSettings.lineWidth}
-          onChange={(e) =>
-            setEraserSettings((prev: any) => ({
-              ...prev,
-              lineWidth: e.target.value,
-            }))
-          }
-          min={1}
-          max={100}
-          step={1}
-        />
+    <Popper
+      placement="left-start"
+      anchorEl={anchorEl}
+      open={Boolean(anchorEl)}
+      className={tw(
+        '!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
+      )}
+    >
+      <div
+        className={tw(
+          'flex-col flex gap-4 w-48 text-sm font-semibold font-nunitoSans'
+        )}
+      >
+        <div className={tw('flex flex-col gap-1')}>
+          <h3 className={tw('text-[#ECDEDE]')}>Thickness</h3>
+          <Slider
+            value={eraserSettings.lineWidth}
+            onChange={(e) =>
+              setEraserSettings((prev: any) => ({
+                ...prev,
+                lineWidth: e.target.value,
+              }))
+            }
+            min={1}
+            max={100}
+            step={1}
+          />
+        </div>
       </div>
-    </div>
+    </Popper>
   );
 };

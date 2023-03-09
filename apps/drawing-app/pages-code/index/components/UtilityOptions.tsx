@@ -60,7 +60,11 @@ const UtilityOptions = () => {
   }, []);
 
   return (
-    <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
+    <div
+      className={tw(
+        'rounded-lg absolute right-0 top-[50%] translate-y-[-50%] overflow-hidden flex flex-col'
+      )}
+    >
       {utilityOptions.current.map(({ icon, key, ...rest }) => (
         <IconButton key={key} {...rest}>
           <Image src={icon} alt={rest.title} />
