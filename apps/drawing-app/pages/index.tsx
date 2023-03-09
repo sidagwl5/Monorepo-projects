@@ -11,7 +11,7 @@ const DrawingApp = () => {
     <section
       id="root_container"
       className={tw(
-        'w-full h-screen p-3 bg-rootContainerClr flex justify-center items-center'
+        'w-full h-screen p-1 sm:p-3 bg-rootContainerClr flex justify-center items-center'
       )}
     >
       {!proceed ? (

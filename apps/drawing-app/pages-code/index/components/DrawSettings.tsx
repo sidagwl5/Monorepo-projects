@@ -105,7 +105,7 @@ export const DrawSettings = ({ anchorEl }) => {
       anchorEl={anchorEl}
       open={Boolean(anchorEl)}
       className={tw(
-        '!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
+        '!ml-2 sm:!ml-4 p-3 rounded-lg overflow-hidden bg-[#574D51] border border-[#695F63]'
       )}
     >
       <div
