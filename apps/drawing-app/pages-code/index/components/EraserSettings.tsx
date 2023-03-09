@@ -104,10 +104,10 @@ export const EraserSettings = ({ anchorEl }) => {
           <h3 className={tw('text-[#ECDEDE]')}>Thickness</h3>
           <Slider
             value={eraserSettings.lineWidth}
-            onChange={(e) =>
+            onChange={(_, value) =>
               setEraserSettings((prev: any) => ({
                 ...prev,
-                lineWidth: e.target.value,
+                lineWidth: value,
               }))
             }
             min={1}

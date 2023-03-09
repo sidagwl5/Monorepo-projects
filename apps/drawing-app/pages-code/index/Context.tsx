@@ -1,7 +1,7 @@
 import { createContext, useContext, useRef, useState } from 'react';
 import { layouts } from './staticData';
 
-const drawingContext = createContext({});
+const drawingContext = createContext({} as any);
 
 export const useDrawingContext = () => useContext(drawingContext);
 

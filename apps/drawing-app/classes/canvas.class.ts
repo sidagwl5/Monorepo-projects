@@ -28,7 +28,8 @@ export class Canvas {
       strokeStyle,
     } = _config;
 
-    Canvas.context.globalCompositeOperation = globalCompositeOperation;
+    Canvas.context.globalCompositeOperation =
+      globalCompositeOperation as GlobalCompositeOperation;
     Canvas.context.lineCap = lineCap ? 'round' : 'square';
     Canvas.context.lineJoin = lineJoin ? 'round' : 'miter';
     Canvas.context.lineWidth = lineWidth;

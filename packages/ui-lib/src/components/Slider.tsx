@@ -1,7 +1,7 @@
-import { Slider as MuiSlider } from '@mui/material';
+import { Slider as MuiSlider, SliderProps } from '@mui/material';
 import { tw } from 'twind/style';
 
-export const Slider = ({ className, ...rest }) => {
+export const Slider = ({ className, ...rest }: SliderProps) => {
   return (
     <MuiSlider
       {...rest}

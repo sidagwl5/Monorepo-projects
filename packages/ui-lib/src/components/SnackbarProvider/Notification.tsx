@@ -1,4 +1,4 @@
-import { useSnackbar } from 'notistack';
+import { VariantMap, useSnackbar } from 'notistack';
 import { forwardRef } from 'react';
 import { css, style, tw } from 'twind/style';
 import {
@@ -15,6 +15,9 @@ const notificationStyles = style({
   ),
   variants: {
     variant: {
+      default: css({
+        background: 'linear-gradient(90deg, #1E38C1 14.62%, #48A6FC 119.74%)',
+      }),
       success: css({
         background: 'linear-gradient(90deg, #359C11 14.62%, #39E736 119.74%)',
       }),
@@ -32,57 +35,69 @@ const notificationStyles = style({
 });
 
 // eslint-disable-next-line react/display-name
-const Notification = forwardRef(({ variant, id, message }, ref) => {
-  const { closeSnackbar } = useSnackbar();
+const Notification = forwardRef(
+  (
+    {
+      variant,
+      id,
+      message,
+    }: { variant: keyof VariantMap; id: string; message: string },
+    ref
+  ) => {
+    const { closeSnackbar } = useSnackbar();
 
-  const clickHandler = () => {
-    closeSnackbar(id);
-  };
+    const clickHandler = () => {
+      closeSnackbar(id);
+    };
 
-  const giveValidIcon = () => {
-    switch (variant) {
-      case 'info':
-        return infoCircleSvg;
+    const giveValidIcon = () => {
+      switch (variant) {
+        case 'info':
+          return infoCircleSvg;
 
-      case 'success':
-        return tickSquareSvg;
+        case 'success':
+          return tickSquareSvg;
 
-      case 'error':
-        return errorCircleSvg;
+        case 'error':
+          return errorCircleSvg;
 
-      case 'warning':
-        return warningSvg;
-    }
-  };
+        case 'warning':
+          return warningSvg;
+      }
+    };
 
-  return (
-    <div ref={ref} className={tw(notificationStyles({ variant }))}>
+    return (
       <div
-        className={tw(
-          'h-full rounded-lg flex justify-center p-[5px] items-center',
-          css({
-            aspectRatio: '1/1',
-            background: 'rgba(255, 255, 255, 0.24)',
-            boxShadow: '3px 3px 16px 4px rgba(30, 154, 19, 0.16)',
-          })
-        )}
+        ref={ref as { current: HTMLDivElement }}
+        className={tw(notificationStyles({ variant }))}
       >
+        <div
+          className={tw(
+            'h-full rounded-lg flex justify-center p-[5px] items-center',
+            css({
+              aspectRatio: '1/1',
+              background: 'rgba(255, 255, 255, 0.24)',
+              boxShadow: '3px 3px 16px 4px rgba(30, 154, 19, 0.16)',
+            })
+          )}
+        >
+          <img
+            className={tw('object-contain')}
+            src={giveValidIcon()?.src ?? giveValidIcon()}
+            alt="icons for notification"
+          />
+        </div>
+        {message}
+
         <img
-          className={tw('object-contain')}
-          src={giveValidIcon()?.src ?? giveValidIcon()}
-          alt="icons for notification"
+          onClick={clickHandler}
+          className={tw('ml-auto cursor-pointer')}
+          src={crossSvg?.src ?? crossSvg}
+          alt="icon to close notification"
         />
       </div>
-      {message}
-
-      <img
-        onClick={clickHandler}
-        className={tw('ml-auto cursor-pointer')}
-        src={crossSvg?.src ?? crossSvg}
-        alt="icon to close notification"
-      />
-    </div>
-  );
-});
+    );
+  }
+);
 
 export default Notification;

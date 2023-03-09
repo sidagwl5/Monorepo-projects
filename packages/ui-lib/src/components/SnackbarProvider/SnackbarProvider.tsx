@@ -11,7 +11,7 @@ export const SnackbarProvider = ({
   excludePaths = [],
 }: {
   children: ReactElement;
-  excludePaths: string[];
+  excludePaths?: string[];
 }) => {
   return (
     <NotistackSnackbarProvider

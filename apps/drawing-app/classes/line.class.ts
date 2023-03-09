@@ -46,8 +46,8 @@ export class Line {
     backupCanvas.height = canvas.height;
 
     backupContext.lineWidth = this.contextConfig.lineWidth + 5;
-    backupContext.lineJoin = this.contextConfig.lineJoin;
-    backupContext.lineCap = this.contextConfig.lineCap;
+    backupContext.lineJoin = this.contextConfig.lineJoin as CanvasLineJoin;
+    backupContext.lineCap = this.contextConfig.lineCap as CanvasLineCap;
 
     backupContext.beginPath();
     backupContext.moveTo(this.points[0].x, this.points[0].y);
