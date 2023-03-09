@@ -32,11 +32,16 @@ export const FullScreenOptions = () => {
       ref={divRef}
       className={tw('rounded-lg overflow-hidden text-white flex flex-col')}
     >
-      <IconButton onClick={handleOptionClick}>
+      <IconButton
+        tooltipProps={{
+          title: open ? 'Exit fullscreen mode' : 'Enter fullscreen mode',
+        }}
+        onClick={handleOptionClick}
+      >
         {open ? (
-          <FullscreenExitIcon className={tw('text-white')} />
+          <FullscreenExitIcon className={tw('text-white text-[28px]')} />
         ) : (
-          <FullscreenIcon className={tw('text-white')} />
+          <FullscreenIcon className={tw('text-white text-[28px]')} />
         )}
       </IconButton>
     </div>

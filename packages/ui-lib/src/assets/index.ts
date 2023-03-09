@@ -13,3 +13,4 @@ export { default as resetSvg } from './svgs/reset.svg';
 export { default as arrowRotateLeftSvg } from './svgs/reset.svg';
 export { default as pointerCircleSvg } from './svgs/pointerCircle.svg';
 export { default as settingsSvg } from './svgs/settings.svg';
+export { default as notificationsSvg } from './svgs/bell.svg';

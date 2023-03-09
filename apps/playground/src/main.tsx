@@ -3,6 +3,7 @@ import './main.css';
 
 import App from './app/app';
 import { DrawingContext } from './features/drawingApp/Context';
+import DynamicListWithKeyIndex from './react-concepts/DynamicListWithKeyIndex';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -10,7 +11,7 @@ const root = ReactDOM.createRoot(
 root.render(
   // <StrictMode>
   <DrawingContext>
-    <App />
+    <DynamicListWithKeyIndex />
   </DrawingContext>
   // {/* </StrictMode> */}
 );

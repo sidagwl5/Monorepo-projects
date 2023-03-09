@@ -1,4 +1,3 @@
-import Image from 'next/image';
 import { useSnackbar } from 'notistack';
 import { forwardRef } from 'react';
 import { css, style, tw } from 'twind/style';
@@ -12,7 +11,7 @@ import {
 
 const notificationStyles = style({
   base: tw(
-    'max-w-[390px] w-full h-12 font-nunitoSans text-[14.7px] text-white p-2 rounded-lg flex gap-3 items-center'
+    'max-w-[350px] w-full h-12 font-nunitoSans text-[14.7px] text-white p-2 rounded-lg flex gap-3 items-center'
   ),
   variants: {
     variant: {
@@ -68,14 +67,18 @@ const Notification = forwardRef(({ variant, id, message }, ref) => {
           })
         )}
       >
-        <Image src={giveValidIcon()} alt="icons for notification" />
+        <img
+          className={tw('object-contain')}
+          src={giveValidIcon()?.src ?? giveValidIcon()}
+          alt="icons for notification"
+        />
       </div>
       {message}
 
-      <Image
+      <img
         onClick={clickHandler}
-        className={tw('ml-2 cursor-pointer')}
-        src={crossSvg}
+        className={tw('ml-auto cursor-pointer')}
+        src={crossSvg?.src ?? crossSvg}
         alt="icon to close notification"
       />
     </div>
