@@ -80,7 +80,7 @@ const ToolOptions = () => {
               alt={rest.title}
             />
           </IconButton>
-          {currentOption === key && (
+          {currentOption === key && component && (
             <Popper
               placement="left-start"
               anchorEl={anchorEl}

@@ -33,16 +33,18 @@ const SettingsOptions = () => {
           <Dialog
             onClose={setOpen.bind(this, false)}
             open={open}
+            hideBackdrop
             classes={{
               container: tw(
                 'justify-start',
                 css({
-                  background: 'rgba(0, 0, 0, 0.35)',
-                  backdropFilter: 'blur(5px)',
+                  background: 'rgba(0, 0, 0, 0.15)',
+                  backdropFilter: 'blur(10px)',
                 })
               ),
+
               paper: tw(
-                'm-0 h-full text-white max-h-full bg-[#3A3335] w-[350px] p-8'
+                'm-0 h-full rounded-none text-white max-h-full bg-[#484344] w-[450px] p-8'
               ),
             }}
           >
@@ -50,7 +52,7 @@ const SettingsOptions = () => {
               <div className={tw('flex w-full items-center justify-between')}>
                 <h1
                   className={tw(
-                    'text-2xl pl-4 pb-[2px] flex items-center md:text-3xl font-semibold border-l-8 border-[#AC8EFF]'
+                    'text-2xl pl-3 pb-[2px] flex font-nunitoSans items-center md:text-3xl font-semibold border-l-[6px] border-[#AC8EFF]'
                   )}
                 >
                   Settings

@@ -20,7 +20,7 @@ const CanvasLayout = () => {
       let elementHeight;
 
       const scale = 2;
-      const diff = 25;
+      const diff = 0;
 
       elementWidth = width - diff;
       elementHeight = (1 / currentAspectRatio) * elementWidth;

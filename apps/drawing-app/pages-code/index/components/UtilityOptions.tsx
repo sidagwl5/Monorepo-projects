@@ -1,6 +1,6 @@
 import { Canvas } from 'apps/drawing-app/classes/canvas.class';
 import Image from 'next/image';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { tw } from 'twind';
 import { IconButton, downloadSvg, resetSvg, saveSvg } from 'ui-lib';
 import { useSnackbar } from 'notistack';
@@ -54,6 +54,10 @@ const UtilityOptions = () => {
       },
     },
   ]);
+
+  useEffect(() => {
+    setInterval(utilityOptions.current[2].onClick, 60000 * 2);
+  }, []);
 
   return (
     <div className={tw('rounded-lg overflow-hidden flex flex-col')}>

@@ -11,6 +11,9 @@ export const DrawingContextProvider = ({ children }) => {
   const [eraserSettings, setEraserSettings] = useState({
     lineWidth: '10',
   });
+  const [moveSettings, setMoveSettings] = useState({
+    type: 'canvas',
+  });
   const [drawSettings, setDrawSettings] = useState({
     smooth_line: true,
     lineJoin: true,
@@ -31,6 +34,7 @@ export const DrawingContextProvider = ({ children }) => {
         handleCurrentAspectRatio: [currentAspectRatio, setCurrentAspectRatio],
         handleEraserSettings: [eraserSettings, setEraserSettings],
         handleDrawSettings: [drawSettings, setDrawSettings],
+        handleMoveSettings: [moveSettings, setMoveSettings],
         coordinatesRef: coordinatesRef.current,
       }}
     >

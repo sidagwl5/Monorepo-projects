@@ -1,7 +1,14 @@
 import { useEffect } from 'react';
 import { Canvas } from '../../../classes/canvas.class';
+import SettingsOverscanIcon from '@mui/icons-material/SettingsOverscan';
+import { tw } from 'twind';
+import { useDrawingContext } from '../Context';
 
 export const MoveSettings = () => {
+  const {
+    handleMoveSettings: [moveSettings, setMoveSettings],
+  } = useDrawingContext();
+
   useEffect(() => {
     const { canvas } = Canvas.getElements();
 
@@ -79,5 +86,24 @@ export const MoveSettings = () => {
     };
   }, []);
 
-  return null;
+  return (
+    <div className={tw('w-full flex-col flex gap-4')}>
+      <div className={tw('flex flex-col gap-1')}>
+        <h3 className={tw('text-[#ECDEDE]')}>Type</h3>
+        <div className={tw('flex gap-2 text-[#ECDEDE]!')}>
+          <span
+            onClick={() =>
+              setMoveSettings((prev) => ({ ...prev, type: 'canvas' }))
+            }
+            className={tw(
+              'h-8 w-8 rounded-md cursor-pointer flex justify-center items-center',
+              moveSettings.type === 'canvas' && 'text-white bg-WildcardBg'
+            )}
+          >
+            <SettingsOverscanIcon />
+          </span>
+        </div>
+      </div>
+    </div>
+  );
 };

@@ -173,7 +173,7 @@ export const DrawSettings = () => {
                   pointerEvents: 'none !important',
                 },
                 '& > div:nth-child(1)': {
-                  height: '130px',
+                  height: '100px',
                   borderRadius: '4px',
                   overflow: 'hidden !important',
                   paddingBottom: '0px !important',
