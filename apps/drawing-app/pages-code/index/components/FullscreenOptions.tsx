@@ -1,10 +1,9 @@
-import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import Image from 'next/image';
+import { enqueueSnackbar } from 'notistack';
 import { useEffect, useRef, useState } from 'react';
 import { tw } from 'twind/style';
-import { IconButton } from 'ui-lib';
-import FullscreenIcon from '@mui/icons-material/Fullscreen';
-import { useFullscreen, useToggle } from 'react-use';
-import { enqueueSnackbar } from 'notistack';
+import { IconButton, exitFullScreenSvg } from 'ui-lib';
 
 export const FullScreenOptions = () => {
   const [open, setOpen] = useState(false);
@@ -39,7 +38,11 @@ export const FullScreenOptions = () => {
         onClick={handleOptionClick}
       >
         {open ? (
-          <FullscreenExitIcon className={tw('text-white text-[28px]')} />
+          <Image
+            src={exitFullScreenSvg}
+            width={20}
+            alt="exit fullscreen mode"
+          />
         ) : (
           <FullscreenIcon className={tw('text-white text-[28px]')} />
         )}
