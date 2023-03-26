@@ -24,12 +24,15 @@ const FillForm = ({ handleSubmitForm }: any) => {
       const notificationsCollection = collection(firestore, 'notifications');
       const notificationDoc = doc(notificationsCollection, userDoc.id);
 
+      const sessionsCollection = collection(firestore, 'sessions');
+      await setDoc(doc(sessionsCollection), { participants: [data.email] });
+
       setDoc(notificationDoc, {
         message: `${data.name} has subscribed to chat!`,
         variant: 'info',
         read: false,
       });
-      handleSubmitForm();
+      handleSubmitForm(data);
     } catch (err) {
       console.error(err);
     } finally {

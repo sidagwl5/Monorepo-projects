@@ -28,8 +28,6 @@ export class Canvas {
       strokeStyle,
     } = _config;
 
-    console.log({ _config });
-
     Canvas.context.globalCompositeOperation = globalCompositeOperation;
     Canvas.context.lineCap = lineCap ? 'round' : 'square';
     Canvas.context.lineJoin = lineJoin ? 'round' : 'miter';

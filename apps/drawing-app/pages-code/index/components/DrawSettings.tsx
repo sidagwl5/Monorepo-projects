@@ -17,7 +17,6 @@ export const DrawSettings = ({ anchorEl }) => {
   } = useDrawingContext();
 
   useEffect(() => {
-    console.log('useffect');
     Canvas.updateContextConfig({
       ...drawSettings,
       globalCompositeOperation: 'source-over',

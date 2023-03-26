@@ -48,7 +48,7 @@ const Chat = ({
               id: crypto.randomUUID(),
               title: value,
               initiator: currentInitiator,
-              receiver,
+              // receiver,
               time: dayjs().toISOString(),
             });
 
