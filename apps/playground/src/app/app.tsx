@@ -47,14 +47,6 @@ const SnackbarComponent = forwardRef(
 export function App() {
   const { setCurrentAspectRatio, currentAspectRatio } = useDrawingContext();
 
-  useEffect(() => {
-    console.log('useEffect');
-    window.addEventListener('message', (message) => {
-      console.log(message.data, message.origin);
-      if (message.origin === 'http://localhost:4200') console.log(message.data);
-    });
-  }, []);
-
   return (
     <SnackbarProvider
       maxSnack={2}

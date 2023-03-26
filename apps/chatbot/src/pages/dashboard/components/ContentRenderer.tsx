@@ -1,36 +1,38 @@
-import Chat from 'apps/chatbot/src/components/Chat';
 import ChatConfig from 'apps/chatbot/src/components/ChatConfig';
 import { firestore } from 'apps/chatbot/src/configs/firebase.config';
-import { collection, where, query, getDocs } from 'firebase/firestore';
-import { useRef, useState, useEffect } from 'react';
+import { useMeQuery } from 'apps/chatbot/src/queries/user.query';
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from 'firebase/firestore';
+import { useEffect, useRef, useState } from 'react';
 import { tw } from 'twind';
 
 const ContentRenderer = () => {
+  const { me } = useMeQuery();
   const [currentChatSession, setCurrentChatSession] = useState<Record<
     string,
     any
   > | null>(null);
   const [chatSessions, setChatSessions] = useState<any[]>([]);
-  const currentInitiator = useRef('fa61be64-c87a-4348-b7e4-b837ad761b16');
-  const [messages, setMessages] = useState([]);
+  const currentInitiator = useRef(me.email);
 
   useEffect(() => {
     (async () => {
       const notificationsCollection = collection(firestore, 'sessions');
-      const queryRef = query(
-        notificationsCollection,
-        where('participants', 'array-contains', currentInitiator.current)
-      );
-      const docs = await getDocs(queryRef);
-      setChatSessions(docs.docs);
+
+      onSnapshot(notificationsCollection, (snapshot) => {
+        setChatSessions(snapshot.docs);
+      });
     })();
   }, []);
 
-  console.log({ chatSessions });
-
   return (
     <div className={tw('flex-1 gap-6 flex')}>
-      <div className={tw('w-[250px] text-white')}>
+      <div className={tw('w-[250px] text-white flex flex-col gap-3')}>
         {chatSessions.map((chatSession) => {
           const session = chatSession.data();
 
