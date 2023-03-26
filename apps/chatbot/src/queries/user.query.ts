@@ -20,5 +20,5 @@ export const useMeQuery = (params?: UseQueryOptions) => {
     ...params,
   });
 
-  return { me, isMeLoading, meError };
+  return { me: me as any, isMeLoading, meError };
 };

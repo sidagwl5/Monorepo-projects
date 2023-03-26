@@ -45,7 +45,7 @@ export const Chatbot = () => {
           setOpen(!open);
         }}
         className={tw(
-          'w-[50px] p-3 cursor-pointer flex justify-center items-center h-[50px] relative rounded-full bg-blue-400'
+          'w-[50px] p-3.5 cursor-pointer flex justify-center items-center h-[50px] relative rounded-full bg-blue-400'
         )}
       >
         <div className={tw('relative')}>

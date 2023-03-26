@@ -1,5 +1,5 @@
 import { collection, doc, onSnapshot, updateDoc } from 'firebase/firestore';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { firestore } from '../configs/firebase.config';
 import Chat from './Chat';
 
@@ -17,7 +17,7 @@ const ChatConfig = ({ currentChatSession, currentInitiator }) => {
     );
 
     return listener;
-  }, []);
+  }, [currentChatSession]);
 
   return (
     <Chat
