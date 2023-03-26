@@ -1,15 +1,26 @@
 import { tw } from 'twind/style';
-import { IconButton, notificationsSvg, settingsSvg } from 'ui-lib';
+import { IconButton, settingsSvg } from 'ui-lib';
 import messageSvg from '../../../assets/svgs/message.svg';
+import Messages from './Messages';
+import Settings from './Settings';
 
-const settingsOptions = [
+export const settingsOptions = [
+  // {
+  //   title: 'Notifications',
+  //   icon: notificationsSvg,
+  //   key: 'notifications',
+  //   tooltipProps: {
+  //     title: 'Notifications',
+  //   },
+  // },
   {
-    title: 'Notifications',
-    icon: notificationsSvg,
-    key: 'notifications',
+    title: 'Messages',
+    icon: messageSvg,
+    key: 'messages',
     tooltipProps: {
-      title: 'Notifications',
+      title: 'Messages',
     },
+    component: <Messages />,
   },
   {
     title: 'Settings',
@@ -18,25 +29,27 @@ const settingsOptions = [
     tooltipProps: {
       title: 'Settings',
     },
-  },
-  {
-    title: 'Messages',
-    icon: messageSvg,
-    key: 'messages',
-    tooltipProps: {
-      title: 'Messages',
-    },
+    component: <Settings />,
   },
 ];
 
-const SettingsOptions = () => {
-  const handleOptionClick = () => {};
+const SettingsOptions = ({ handleCurrentOption }) => {
+  const [currentOption, setCurrentOption] = handleCurrentOption;
 
   return (
     <div className={tw('rounded-lg overflow-hidden flex flex-col')}>
-      {settingsOptions.map(({ icon, key, component, title, ...rest }) => (
-        <IconButton key={key} onClick={handleOptionClick} {...rest}>
-          <img src={icon} alt={title} />
+      {settingsOptions.map(({ icon, key, component, title, ...rest }, idx) => (
+        <IconButton
+          active={idx === currentOption}
+          key={key}
+          onClick={setCurrentOption.bind(this, idx)}
+          {...rest}
+        >
+          <img
+            className={tw(idx === currentOption && 'invert filter')}
+            src={icon}
+            alt={title}
+          />
         </IconButton>
       ))}
     </div>

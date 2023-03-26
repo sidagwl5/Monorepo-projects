@@ -25,7 +25,10 @@ const FillForm = ({ handleSubmitForm }: any) => {
       const notificationDoc = doc(notificationsCollection, userDoc.id);
 
       const sessionsCollection = collection(firestore, 'sessions');
-      await setDoc(doc(sessionsCollection), { participants: [data.email] });
+      await setDoc(doc(sessionsCollection), {
+        participants: [data.email],
+        name: data.name,
+      });
 
       setDoc(notificationDoc, {
         message: `${data.name} has subscribed to chat!`,
