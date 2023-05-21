@@ -7,7 +7,9 @@ export const useDrawingContext = () => useContext(drawingContext);
 
 export const DrawingContextProvider = ({ children }) => {
   const coordinatesRef = useRef<any[]>([]);
-
+  const [settings, setSettings] = useState({
+    autoSave: true,
+  });
   const [eraserSettings, setEraserSettings] = useState({
     lineWidth: '10',
   });
@@ -36,6 +38,7 @@ export const DrawingContextProvider = ({ children }) => {
         handleDrawSettings: [drawSettings, setDrawSettings],
         handleMoveSettings: [moveSettings, setMoveSettings],
         coordinatesRef: coordinatesRef.current,
+        handleSettings: [settings, setSettings],
       }}
     >
       {children}
