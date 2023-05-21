@@ -81,7 +81,7 @@ export class Line {
   }
 
   addSmoothness() {
-    console.log('cool');
+    console.log('addding smoothness');
   }
 
   isSmoothnessEnabled() {

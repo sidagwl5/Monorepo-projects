@@ -43,7 +43,7 @@ export class Circle {
   }
 
   isSelected() {
-    console.log('called');
+    console.log('selected');
   }
 
   drawAgain() {

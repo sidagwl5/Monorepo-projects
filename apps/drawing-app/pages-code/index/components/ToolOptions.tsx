@@ -46,7 +46,7 @@ const toolOptions = [
 
 const ToolOptions = () => {
   const [anchorEl, setAnchorEl] = useState(null);
-  const [currentOption, setCurrentOption] = useState('select');
+  const [currentOption, setCurrentOption] = useState('draw');
 
   const handleOptionClick = (key, e) => {
     setAnchorEl(e.currentTarget);

@@ -1,9 +1,10 @@
-import { Dialog, DialogContent } from '@mui/material';
+import { Dialog, DialogContent, Switch } from '@mui/material';
 import Image from 'next/image';
 import { useState } from 'react';
 import { css, tw } from 'twind/style';
 import { IconButton, settingsSvg } from 'ui-lib';
 import CloseIcon from '@mui/icons-material/Close';
+import { useDrawingContext } from '../Context';
 
 const settingsOptions = [
   {
@@ -17,6 +18,9 @@ const settingsOptions = [
 ];
 
 const SettingsOptions = () => {
+  const {
+    handleSettings: [settings, setSettings],
+  } = useDrawingContext();
   const [open, setOpen] = useState(false);
 
   const handleOptionClick = () => {
@@ -42,7 +46,7 @@ const SettingsOptions = () => {
               container: tw(
                 'justify-start',
                 css({
-                  background: 'rgba(0, 0, 0, 0.15)',
+                  background: 'rgba(0, 0, 0, 0.35)',
                   backdropFilter: 'blur(10px)',
                 })
               ),
@@ -66,6 +70,25 @@ const SettingsOptions = () => {
                   className={tw('opacity-80 cursor-pointer')}
                   onClick={setOpen.bind(this, false)}
                 />
+              </div>
+
+              <div
+                className={tw(
+                  'w-full flex flex-col mt-10 text-lg pl-3 pr-1 gap-3'
+                )}
+              >
+                <div className={tw('justify-between flex items-center')}>
+                  <p>Auto Save</p>
+                  <Switch
+                    checked={settings.autoSave}
+                    onChange={(e) =>
+                      setSettings((prev) => ({
+                        ...prev,
+                        autoSave: e.target.checked,
+                      }))
+                    }
+                  />
+                </div>
               </div>
             </DialogContent>
           </Dialog>

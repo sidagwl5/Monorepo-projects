@@ -62,7 +62,6 @@ const ColorPalette = ({ currentColor, updateColor }: any) => {
           vertical: 'center',
         }}
         onClose={(e) => {
-          console.log('close');
           setPopoverOpen(false);
         }}
         anchorEl={anchorRef.current}
@@ -110,8 +109,6 @@ export const ColorPickerForCanvasBg = () => {
   }, []);
 
   useEffect(() => {
-    console.log(drawingState);
-
     const canvasElement = document.getElementById(
       'canvas'
     ) as HTMLCanvasElement;
