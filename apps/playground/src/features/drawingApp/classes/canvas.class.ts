@@ -14,7 +14,7 @@ export class Canvas {
 
   static initialize(_canvas: HTMLCanvasElement) {
     Canvas.canvas = _canvas;
-    Canvas.context = _canvas.getContext('2d', {
+    Canvas.context = _canvas?.getContext('2d', {
       willReadFrequently: true,
     }) as CanvasRenderingContext2D;
   }

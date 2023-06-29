@@ -10,6 +10,7 @@ export const DrawingContextProvider = ({ children }) => {
   const [settings, setSettings] = useState({
     autoSave: true,
   });
+
   const [eraserSettings, setEraserSettings] = useState({
     lineWidth: '10',
   });
